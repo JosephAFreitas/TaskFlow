@@ -1,6 +1,17 @@
 /*
-  STEP 1: Select HTML elements from the page
-  We use query selectors to get the input field, button, and list container.
+  script.js - To-Do List Logic (with persistence, edit mode, and Enter key support)
+
+  Data Stored in localStorage:
+  - Key: "todoTasks"
+  - Value: JSON string of an array of task objects:
+    [
+      {
+        id: <number>,         // unique identifier (Date.now())
+        text: <string>,       // task description
+        timestamp: <string>,  // formatted time (e.g., "2:45 PM")
+        completed: <boolean>  // true if task is marked done
+      }
+    ]
 */
 
 // Select the text input where the user types a new task
@@ -12,94 +23,210 @@ const addButton = document.querySelector('#addBtn');
 // Select the <ul> element where task items will be added
 const taskList = document.querySelector('#taskList');
 
+// Storage key used for localStorage
+const STORAGE_KEY = 'todoTasks';
+
+// In-memory list of tasks (kept in sync with localStorage)
+let tasks = [];
+
 
 /*
-  STEP 2: Add a click event listener to the button
-  When the user clicks, we run the addTask function.
+  STEP 1: Initialize app
+  Load tasks from localStorage and render them.
+*/
+function init() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      tasks = JSON.parse(saved);
+    } catch (e) {
+      tasks = [];
+    }
+  }
+
+  tasks.forEach((task) => addTaskToDOM(task));
+}
+
+
+/*
+  STEP 2: Persist tasks to localStorage
+*/
+function saveTasks() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+}
+
+
+/*
+  STEP 3: Enter key support
+  Pressing Enter in the input triggers the same behavior as clicking Add Task.
+*/
+taskInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    addTask();
+  }
+});
+
+
+/*
+  STEP 4: Add Task button handler
 */
 addButton.addEventListener('click', addTask);
 
 
 /*
-  STEP 3: Define the addTask function
-  This function reads the input value, creates a new task card, and appends it to the list.
+  STEP 5: Add a new task
 */
 function addTask() {
-  // Read the current input value (trim removes leading/trailing spaces)
   const taskText = taskInput.value.trim();
-
-  // If the input is empty, do nothing and exit the function
   if (!taskText) {
     return;
   }
 
-  // Create a new list item (<li>) to hold the task card
+  const newTask = {
+    id: Date.now(),
+    text: taskText,
+    timestamp: formatCurrentTime(),
+    completed: false,
+  };
+
+  tasks.push(newTask);
+  saveTasks();
+  addTaskToDOM(newTask);
+
+  taskInput.value = '';
+  taskInput.focus();
+}
+
+
+/*
+  STEP 6: Format the current local time as HH:MM AM/PM
+*/
+function formatCurrentTime() {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const isPM = hours >= 12;
+  const formattedHour = ((hours + 11) % 12) + 1;
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  return `${formattedHour}:${formattedMinutes} ${isPM ? 'PM' : 'AM'}`;
+}
+
+
+/*
+  STEP 7: Render a task object into the DOM
+*/
+function addTaskToDOM(task) {
   const listItem = document.createElement('li');
   listItem.className = 'task-item';
+  listItem.dataset.id = task.id;
 
-  // Create a span to hold the task text for styling and structure
+  // Content: text + timestamp
   const taskSpan = document.createElement('span');
-  taskSpan.textContent = taskText;
   taskSpan.className = 'task-text';
+  taskSpan.textContent = task.text;
 
-  // STEP: Create a timestamp (local device time) for when the task was added
-  const timestamp = new Date();
-
-  // Format the time as HH:MM AM/PM (e.g., "2:45 PM")
-  const hours = timestamp.getHours();
-  const minutes = timestamp.getMinutes();
-  const isPM = hours >= 12;
-  const formattedHour = ((hours + 11) % 12) + 1; // converts 0-23 to 1-12
-  const formattedMinutes = minutes.toString().padStart(2, '0');
-  const timeString = `${formattedHour}:${formattedMinutes} ${isPM ? 'PM' : 'AM'}`;
-
-  // Create an element to display the timestamp
   const timeSpan = document.createElement('span');
-  timeSpan.textContent = timeString;
   timeSpan.className = 'task-timestamp';
+  timeSpan.textContent = task.timestamp;
 
-  // Create a container for the text + timestamp to keep layout clean
   const contentContainer = document.createElement('div');
   contentContainer.className = 'task-content';
   contentContainer.appendChild(taskSpan);
   contentContainer.appendChild(timeSpan);
 
-  // Create a "Done" button to mark the task as completed
+  // Action buttons: Done / Edit / Delete
   const doneButton = document.createElement('button');
   doneButton.textContent = '✓';
   doneButton.className = 'done-btn';
 
-  // Toggle the .completed state on the task item when Done is clicked
-  doneButton.addEventListener('click', () => {
-    listItem.classList.toggle('completed');
-  });
+  const editButton = document.createElement('button');
+  editButton.textContent = '✏️';
+  editButton.className = 'edit-btn';
 
-  // Create a delete button so the user can remove the task
   const deleteButton = document.createElement('button');
   deleteButton.textContent = '✕';
   deleteButton.className = 'delete-btn';
 
-  // When the delete button is clicked, remove this task item from the list
-  deleteButton.addEventListener('click', () => {
-    listItem.remove();
-  });
-
-  // Create a container for action buttons to keep them aligned
   const actionContainer = document.createElement('div');
   actionContainer.className = 'task-actions';
   actionContainer.appendChild(doneButton);
+  actionContainer.appendChild(editButton);
   actionContainer.appendChild(deleteButton);
 
-  // Add the content and action buttons into the list item
   listItem.appendChild(contentContainer);
   listItem.appendChild(actionContainer);
 
-  // Append the new list item to the task list (<ul>)
+  if (task.completed) {
+    listItem.classList.add('completed');
+  }
+
+  // Toggle completed state
+  doneButton.addEventListener('click', () => {
+    listItem.classList.toggle('completed');
+    const index = tasks.findIndex((t) => t.id === task.id);
+    if (index !== -1) {
+      tasks[index].completed = listItem.classList.contains('completed');
+      saveTasks();
+    }
+  });
+
+  // Delete task
+  deleteButton.addEventListener('click', () => {
+    listItem.remove();
+    tasks = tasks.filter((t) => t.id !== task.id);
+    saveTasks();
+  });
+
+  // Edit task (via button or double-click)
+  const startEdit = () => enterEditMode(task, taskSpan);
+  editButton.addEventListener('click', startEdit);
+  taskSpan.addEventListener('dblclick', startEdit);
+
   taskList.appendChild(listItem);
-
-  // Clear the input field so the user can type a new task
-  taskInput.value = '';
-
-  // Optional: Return focus to the input so the user can keep typing
-  taskInput.focus();
 }
+
+
+/*
+  STEP 8: Edit-in-place functionality
+*/
+function enterEditMode(task, taskSpan) {
+  const originalText = task.text;
+
+  const editInput = document.createElement('input');
+  editInput.type = 'text';
+  editInput.value = originalText;
+  editInput.className = 'task-edit-input';
+
+  taskSpan.replaceWith(editInput);
+  editInput.focus();
+  editInput.select();
+
+  const saveChanges = () => {
+    const newText = editInput.value.trim();
+
+    if (newText) {
+      task.text = newText;
+      taskSpan.textContent = newText;
+
+      const index = tasks.findIndex((t) => t.id === task.id);
+      if (index !== -1) {
+        tasks[index].text = newText;
+        saveTasks();
+      }
+    }
+
+    editInput.replaceWith(taskSpan);
+  };
+
+  editInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      saveChanges();
+    }
+  });
+
+  editInput.addEventListener('blur', saveChanges);
+}
+
+
+// Initialize the app when the script loads
+init();

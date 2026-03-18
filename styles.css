@@ -425,6 +425,27 @@ h1 {
 }
 
 /* 
+  STEP 19b: Edit input styling
+  When a task is being edited, this input appears in its place.
+*/
+.task-edit-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1.05em;
+  border-radius: 8px;
+  border: 2px solid #3a3a3a;
+  background-color: #1e222b;
+  color: #e0e0e0;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task-edit-input:focus {
+  outline: none;
+  border-color: #C5A059;
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.3);
+}
+
+/* 
   STEP 20: Timestamp styling
   Makes the timestamp smaller and muted so it doesn't distract.
 */
@@ -459,7 +480,17 @@ h1 {
 }
 
 /* 
-  STEP 23: Done button hover state
+  STEP 23: Edit button styling
+  Matches the action buttons, with a soft hover highlight.
+*/
+.edit-btn:hover {
+  background: rgba(150, 150, 150, 0.2);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* 
+  STEP 24: Done button hover state
   Gives a rustic gold highlight when hovering.
 */
 .done-btn:hover {
