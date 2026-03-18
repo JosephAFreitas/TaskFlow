@@ -464,6 +464,79 @@ h1 {
   box-shadow: 0 0 10px rgba(197, 160, 89, 0.3);
 }
 
+/* Login page styles */
+.login-container {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 40px;
+  background-color: #1e222b;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.login-container h1 {
+  margin-bottom: 30px;
+  color: #C5A059;
+  font-size: 2em;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #3a3a3a;
+  border-radius: 8px;
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  font-size: 1em;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #C5A059;
+  box-shadow: 0 0 8px rgba(197, 160, 89, 0.2);
+}
+
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: #C5A059;
+  color: #0a0f18;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.login-btn:hover {
+  background-color: #b8944a;
+}
+
+.login-btn:active {
+  transform: translateY(1px);
+}
+
+.error-message {
+  margin-top: 20px;
+  color: #ff6b6b;
+  font-weight: 500;
+}
+
 /*
   Timestamp styling
   Makes the timestamp smaller and muted so it doesn't distract.

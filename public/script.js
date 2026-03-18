@@ -14,6 +14,20 @@
     ]
 */
 
+// Fetch the current logged-in username from the server and update the page title
+async function loadUser() {
+  try {
+    const response = await fetch('/api/user');
+    const data = await response.json();
+    if (data.username) {
+      document.querySelector('h1').textContent = `${data.username}'s To-Do List`;
+    }
+  } catch (error) {
+    // If fetch fails or user not logged in, keep default title
+    console.error('Failed to load user:', error);
+  }
+}
+
 // Select the text input where the user types a new task
 const taskInput = document.querySelector('#taskInput');
 
@@ -29,8 +43,10 @@ const STORAGE_KEY = 'todoTasks';
 // In-memory list of tasks (kept in sync with localStorage)
 let tasks = [];
 
-// Initialize app by loading tasks from localStorage and rendering them
-function init() {
+// Initialize app by loading user and tasks from localStorage and rendering them
+async function init() {
+  await loadUser();
+
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
     try {
