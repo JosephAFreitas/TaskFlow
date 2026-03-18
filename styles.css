@@ -1,0 +1,426 @@
+/* 
+  DARK MODE TO-DO LIST STYLING
+  A bold, sleek, modern design with navy blue, dark gray, and rustic gold.
+  
+  STEP 1: Global Reset and Base Styling
+  We reset all default browser styles and create a dark mode foundation.
+*/
+
+* {
+  /* 
+    STEP 2: Universal selector - applies to ALL elements
+    
+    margin: 0 - Removes default spacing
+    padding: 0 - Removes default internal spacing
+    box-sizing: border-box - Width/height includes padding and borders
+  */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 
+  STEP 3: Body styling - the foundation of dark mode
+  This styles the entire page background and text.
+*/
+body {
+  /* 
+    Font family: modern, clean fonts with sans-serif fallback
+    'Segoe UI' is a contemporary font that looks sleek
+  */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+  /* 
+    Background color: very deep navy/near-black (#0a0f18)
+    This creates a dark, sophisticated backdrop
+    It's darker than pure black to avoid harshness on the eyes
+  */
+  background-color: #0a0f18;
+  
+  /* Text color: light gray for excellent contrast against dark background */
+  color: #e0e0e0;
+  
+  /* Line height: adds breathing room between lines of text */
+  line-height: 1.6;
+}
+
+/* 
+  STEP 4: Container class - the main card styling
+  This is the sleek dark gray box that holds all our to-do list content.
+*/
+.container {
+  /* Maximum width: limits how wide the content stretches */
+  max-width: 600px;
+  
+  /* 
+    Margin: centers the container horizontally
+    20px on top/bottom adds spacing from edges
+  */
+  margin: 30px auto;
+  
+  /* Padding: internal spacing so content doesn't touch edges */
+  padding: 40px;
+  
+  /* 
+    Background color: sleek dark gray (#1e1e1e)
+    Darker than the page background, creating visual hierarchy
+  */
+  background-color: #1e1e1e;
+  
+  /* 
+    Border radius: 15px creates significantly rounded corners
+    This gives a modern, premium feel to the card
+  */
+  border-radius: 15px;
+  
+  /* 
+    Box shadow: creates depth by making the container float above the background
+    0 10px 40px - shadow offset and blur
+    rgba(0, 0, 0, 0.4) - semi-transparent black shadow
+    The larger values create a more dramatic effect
+  */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* 
+  STEP 5: Header styling
+  This styles the title section at the top.
+*/
+header {
+  /* Text alignment: centers the title */
+  text-align: center;
+  
+  /* Margin bottom: creates space between header and input section */
+  margin-bottom: 35px;
+  
+  /* Padding bottom: internal spacing under the header */
+  padding-bottom: 25px;
+  
+  /* 
+    Border bottom: a gold line separating header from content
+    Using the rustic gold color for visual interest
+  */
+  border-bottom: 3px solid #C5A059;
+}
+
+/* 
+  STEP 6: H1 (main heading) styling
+  This styles the "My To-Do List" title text.
+*/
+h1 {
+  /* 
+    Font size: 3em is very large and commands attention
+    em units are relative, making it scalable
+  */
+  font-size: 3em;
+  
+  /* Font weight: 700 is bold, making the text heavy and impactful */
+  font-weight: 700;
+  
+  /* 
+    Color: rustic gold (#C5A059)
+    This warm, metallic gold contrasts beautifully with the dark background
+  */
+  color: #C5A059;
+  
+  /* 
+    Letter spacing: 2px adds space between letters
+    This creates an elegant, spaced-out look for the title
+  */
+  letter-spacing: 2px;
+  
+  /* Text transform: uppercase makes all letters capital for drama */
+  text-transform: uppercase;
+  
+  /* Text shadow: adds a subtle dark shadow behind the text for depth */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* 
+  STEP 7: Input section styling
+  This wraps the input field and button area.
+*/
+.input-section {
+  /* Margin bottom: creates space between input area and task list */
+  margin-bottom: 30px;
+}
+
+/* 
+  STEP 8: Input container styling
+  This uses Flexbox to arrange the input field and button side-by-side.
+*/
+.input-container {
+  /* 
+    Display: flex enables Flexbox layout
+    This modern layout system arranges items in a row
+  */
+  display: flex;
+  
+  /* 
+    Gap: 12px adds space between the input field and button
+    Creates clean separation between the two elements
+  */
+  gap: 12px;
+  
+  /* Align items: center vertically aligns the input and button */
+  align-items: center;
+}
+
+/* 
+  STEP 9: Task input field styling
+  This styles the text box where users type new tasks.
+*/
+.task-input {
+  /* 
+    Flex: 1 makes the input grow and take up available space
+    This pushes the button to the right side
+  */
+  flex: 1;
+  
+  /* Padding: 15px creates comfortable space inside the input */
+  padding: 15px 18px;
+  
+  /* Font size: 1.05em makes text slightly larger than normal */
+  font-size: 1.05em;
+  
+  /* 
+    Background color: dark gray (#2a2a2a)
+    Slightly lighter than the container so it stands out as an input field
+  */
+  background-color: #2a2a2a;
+  
+  /* 
+    Color: light gray (#b0b0b0)
+    Provides good contrast for readability in dark mode
+  */
+  color: #b0b0b0;
+  
+  /* 
+    Border: 2px solid uses a thicker border
+    Gray border that will change to gold on focus
+  */
+  border: 2px solid #3a3a3a;
+  
+  /* 
+    Border radius: 8px rounds the corners slightly
+    Not as rounded as the container, creating visual hierarchy
+  */
+  border-radius: 8px;
+  
+  /* 
+    Transition: all 0.3s ease smoothly animates ALL properties
+    This creates smooth color and shadow transitions
+  */
+  transition: all 0.3s ease;
+}
+
+/* 
+  STEP 10: Input field placeholder styling
+  This styles the gray hint text that appears when the input is empty.
+*/
+.task-input::placeholder {
+  /* 
+    Color: slightly lighter gray for placeholder text
+    Makes it clearly different from actual user input
+  */
+  color: #666;
+}
+
+/* 
+  STEP 11: Input field focus state
+  This styles the input field when the user clicks on it (focuses it).
+*/
+.task-input:focus {
+  /* 
+    Outline: none removes the default browser outline
+    We replace it with our custom border and shadow below
+  */
+  outline: none;
+  
+  /* 
+    Border color: changes to rustic gold (#C5A059)
+    This gives clear visual feedback that the field is active
+  */
+  border-color: #C5A059;
+  
+  /* 
+    Background color: slightly lighter when focused
+    Makes the field feel more active and interactive
+  */
+  background-color: #333333;
+  
+  /* 
+    Box shadow: adds a golden glow effect around the field
+    rgba(197, 160, 89, 0.4) creates a subtle gold halo
+  */
+  box-shadow: 0 0 12px rgba(197, 160, 89, 0.3);
+}
+
+/* 
+  STEP 12: Add button styling
+  This styles the "Add Task" button - the primary action button.
+*/
+.add-btn {
+  /* Padding: 15px 32px creates a large, clickable button */
+  padding: 15px 32px;
+  
+  /* Font size: 1.05em makes button text slightly larger */
+  font-size: 1.05em;
+  
+  /* Font weight: 700 is bold - very prominent */
+  font-weight: 700;
+  
+  /* 
+    Background color: rustic gold (#C5A059)
+    This warm, luxurious color stands out as the primary action
+  */
+  background-color: #C5A059;
+  
+  /* 
+    Color: very dark gray/near-black text (#0a0f18)
+    High contrast with the gold background for readability
+  */
+  color: #0a0f18;
+  
+  /* Border: none removes any default button border */
+  border: none;
+  
+  /* Border radius: 8px rounds corners to match the input field */
+  border-radius: 8px;
+  
+  /* 
+    Cursor: pointer changes mouse cursor to indicate clickability
+    Good UX - tells users the button is interactive
+  */
+  cursor: pointer;
+  
+  /* 
+    Transition: all 0.3s ease smoothly animates ALL properties
+    This creates smooth transitions on hover and active states
+  */
+  transition: all 0.3s ease;
+  
+  /* 
+    Box shadow: subtle shadow gives the button depth
+    Makes it appear elevated above the page
+  */
+  box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
+}
+
+/* 
+  STEP 13: Add button hover state
+  This styles the button when the user hovers their mouse over it.
+*/
+.add-btn:hover {
+  /* 
+    Background color: slightly lighter/warmer gold
+    Creates visual feedback that the button is interactive
+  */
+  background-color: #D4B896;
+  
+  /* 
+    Transform: scale(1.05) makes the button grow 5% larger
+    This growth effect creates an appealing "lift" sensation
+  */
+  transform: scale(1.05);
+  
+  /* 
+    Box shadow: larger shadow makes the button appear to lift off the page
+    The larger shadow distance creates a more dramatic effect
+  */
+  box-shadow: 0 6px 20px rgba(197, 160, 89, 0.35);
+}
+
+/* 
+  STEP 14: Add button active state
+  This styles the button when the user clicks it (presses down).
+*/
+.add-btn:active {
+  /* 
+    Transform: scale(0.98) makes the button shrink slightly
+    This creates a "pressed" effect - like pushing a real button
+  */
+  transform: scale(0.98);
+  
+  /* Box shadow: smaller shadow makes button feel "pressed" into the page */
+  box-shadow: 0 2px 8px rgba(197, 160, 89, 0.2);
+}
+
+/* 
+  STEP 15: Task section styling
+  This container wraps the task list.
+*/
+.task-section {
+  /* No additional styling needed - the list inside has its own styles */
+}
+
+/* 
+  STEP 16: Task list (ul) styling
+  This styles the unordered list container.
+*/
+.task-list {
+  /* 
+    List style: none removes bullet points
+    We want a clean, custom look without default list markers
+  */
+  list-style: none;
+  
+  /* Display: flex with column direction stacks items vertically */
+  display: flex;
+  flex-direction: column;
+  
+  /* Gap: 10px adds space between each task item */
+  gap: 10px;
+}
+
+/* 
+  STEP 17: Responsive design for mobile devices
+  These rules apply when the screen is 600px or smaller (phones).
+*/
+@media (max-width: 600px) {
+  /* 
+    STEP 18: Reduce container padding on mobile
+    Smaller padding maximizes space on small screens
+  */
+  .container {
+    padding: 25px;
+    margin: 15px auto;
+    border-radius: 12px;
+  }
+
+  /* 
+    STEP 19: Adjust heading size for mobile
+    Smaller font size so the title fits better on phones
+  */
+  h1 {
+    font-size: 2.2em;
+    letter-spacing: 1px;
+  }
+
+  /* 
+    STEP 20: Stack input and button vertically on mobile
+    flex-wrap: wrap allows items to wrap to the next line
+  */
+  .input-container {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* 
+    STEP 21: Make input field full width on mobile
+    flex: 1 0 100% forces the input to take 100% width
+  */
+  .task-input {
+    flex: 1 0 100%;
+  }
+
+  /* 
+    STEP 22: Make button full width on mobile
+    Now the button appears below the input field
+  */
+  .add-btn {
+    flex: 1 0 100%;
+    padding: 12px 20px;
+    font-size: 1em;
+  }
+}

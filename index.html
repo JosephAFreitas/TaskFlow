@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!-- 
+  STEP 1: DOCTYPE declaration
+  This tells the browser that this is an HTML5 document.
+  It ensures the browser renders the page correctly.
+-->
+
+<html lang="en">
+<!-- 
+  STEP 2: HTML opening tag with language attribute
+  'lang="en"' tells assistive technologies (like screen readers) 
+  that this page is in English.
+-->
+
+<head>
+  <!-- 
+    STEP 3: Head section
+    This section contains metadata and links to external files.
+    It doesn't display content directly on the page.
+  -->
+
+  <meta charset="UTF-8">
+  <!-- 
+    STEP 4: Character encoding
+    UTF-8 allows us to use special characters and emojis properly.
+  -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 
+    STEP 5: Viewport meta tag
+    This makes the page responsive - it adapts to different screen sizes
+    (phones, tablets, desktops).
+  -->
+
+  <title>My To-Do List</title>
+  <!-- 
+    STEP 6: Page title
+    This text appears in the browser tab and helps with SEO.
+  -->
+
+  <link rel="stylesheet" href="styles.css">
+  <!-- 
+    STEP 7: Link to CSS file
+    This imports our styles.css file to style this HTML page.
+  -->
+</head>
+
+<body>
+  <!-- 
+    STEP 8: Body section
+    Everything inside <body> is visible on the page.
+  -->
+
+  <!-- 
+    STEP 9: Main container
+    A div with class "container" to wrap all our content.
+    This helps with centering and controlling width on the page.
+  -->
+  <div class="container">
+
+    <!-- 
+      STEP 10: Header section
+      The <header> tag is semantic HTML - it tells the browser and 
+      screen readers that this is the top section of the page.
+    -->
+    <header>
+      <h1>My To-Do List</h1>
+      <!-- 
+        STEP 11: Main heading
+        The <h1> is the most important heading and should appear only once.
+        It gives the page a clear title.
+      -->
+    </header>
+
+    <!-- 
+      STEP 12: Main content section
+      The <main> tag wraps the main content of the page.
+      It's good semantic HTML practice.
+    -->
+    <main>
+
+      <!-- 
+        STEP 13: Input section
+        This <section> contains the input field and button for adding tasks.
+      -->
+      <section class="input-section">
+        
+        <!-- 
+          STEP 14: Input container div
+          We wrap the input and button in a div with class "input-container"
+          so we can style them together and align them horizontally.
+        -->
+        <div class="input-container">
+          
+          <!-- 
+            STEP 15: Input field
+            <input type="text"> creates a text box where users can type.
+            - id="taskInput" gives it a unique identifier for JavaScript to reference
+            - placeholder shows grey hint text when the box is empty
+            - class="task-input" applies CSS styling
+          -->
+          <input 
+            type="text" 
+            id="taskInput" 
+            placeholder="Enter a new task..." 
+            class="task-input"
+          >
+
+          <!-- 
+            STEP 16: Add Task button
+            <button> creates a clickable button.
+            - id="addBtn" gives it a unique identifier for JavaScript to reference
+            - class="add-btn" applies CSS styling to make it look good
+          -->
+          <button id="addBtn" class="add-btn">Add Task</button>
+        </div>
+      </section>
+
+      <!-- 
+        STEP 17: Task list section
+        This is where all the tasks will be displayed.
+      -->
+      <section class="task-section">
+        
+        <!-- 
+          STEP 18: Unordered list
+          <ul> creates a bulleted list. This is semantic HTML for showing a list of items.
+          id="taskList" gives it a unique identifier for JavaScript to add tasks to it.
+          It starts empty - JavaScript will add tasks here dynamically.
+        -->
+        <ul id="taskList" class="task-list">
+          <!-- Tasks will be added here by JavaScript -->
+        </ul>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- 
+    STEP 19: Link to JavaScript file
+    This imports our script.js file which will add interactivity.
+    We place it at the end of the body so HTML loads first, then JavaScript runs.
+  -->
+  <script src="script.js"></script>
+</body>
+
+</html>
