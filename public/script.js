@@ -1,7 +1,7 @@
 /*
-  script.js - To-Do List Logic with Event Delegation, Persistence, and Accessibility
+  script.js - To-Do List Logic with Event Delegation and Server Persistence
 
-  Data stored in localStorage as JSON array of task objects with id, text, timestamp, completed properties.
+  Tasks stored on server per user with id, text, timestamp, completed properties.
 */
 
 // Fetch current logged-in username and update page title
@@ -26,9 +26,6 @@ const addButton = document.querySelector('#addBtn');
 const taskList = document.querySelector('#taskList');
 const logoutButton = document.querySelector('#logoutBtn');
 
-// localStorage key for tasks
-const STORAGE_KEY = 'todoTasks';
-
 // In-memory tasks array
 let tasks = [];
 
@@ -36,22 +33,34 @@ let tasks = [];
 async function init() {
   await loadUser();
 
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    try {
-      tasks = JSON.parse(saved);
-    } catch (e) {
-      // If parsing fails due to corrupted data, reset to empty array
+  try {
+    const response = await fetch('/api/tasks');
+    if (response.ok) {
+      tasks = await response.json();
+    } else {
       tasks = [];
     }
+  } catch (error) {
+    console.error('Failed to load tasks:', error);
+    tasks = [];
   }
 
   tasks.forEach((task) => addTaskToDOM(task));
 }
 
-// Persist tasks to localStorage
-function saveTasks() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+// Persist tasks to server
+async function saveTasks() {
+  try {
+    await fetch('/api/tasks', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(tasks)
+    });
+  } catch (error) {
+    console.error('Failed to save tasks:', error);
+  }
 }
 
 // Handle Enter key in input field

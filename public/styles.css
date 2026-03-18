@@ -357,6 +357,22 @@ h1 {
   font-weight: 500;
 }
 
+/* Signup link styling */
+.signup-link {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.signup-link a {
+  color: #C5A059;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
 /*
   Timestamp styling
   Makes the timestamp smaller and muted so it doesn't distract.

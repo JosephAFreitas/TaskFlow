@@ -28,22 +28,23 @@
 
 ### Server Structure
 - **server.js** - Main server file that starts the Express application and defines all routes
-- **users.json** - Simple JSON file acting as a mock database to store user credentials
+- **users.json** - JSON file storing user accounts with username, password, and personal task arrays
 - **public/** - Folder containing all frontend files (HTML, CSS, JavaScript) served by the Express server
 
 ### Authentication Flow
 1. **Login Page** - User visits the site and sees a login form asking for username and password
-2. **Credential Verification** - Server checks submitted credentials against users.json file
-3. **Session Management** - Upon successful login, server tracks the logged-in user for the session
-4. **Protected Routes** - To-do list page requires authentication; unauthenticated users are redirected to login
-5. **Dynamic Content** - To-do list title displays the logged-in user's name (e.g., "Jose's To-Do List")
-6. **Logout Functionality** - User can log out to clear session and return to login page
+2. **Signup Option** - Users can toggle to signup mode to create new accounts
+3. **Account Creation** - New users provide username and password, checked for uniqueness
+4. **Credential Verification** - Server checks submitted credentials against users.json file
+5. **Session Management** - Upon successful login, server tracks the logged-in user for the session
+6. **Protected Routes** - To-do list page requires authentication; unauthenticated users are redirected to login
+7. **Dynamic Content** - To-do list title displays the logged-in user's name (e.g., "Jose's To-Do List")
+8. **Logout Functionality** - User can log out to clear session and return to login page
 
-### Client-Server Communication
-- **HTTP Requests** - Frontend uses fetch() API to send requests to backend endpoints
-- **RESTful Routes** - Server provides endpoints like /login (POST), /logout (GET), /api/user (GET)
-- **JSON Data Exchange** - All data between frontend and backend is sent as JSON objects
-- **CORS Handling** - Server configured to allow requests from the frontend domain
+### Data Persistence
+- **User-Specific Storage** - Each user has a private tasks array stored in users.json
+- **Server-Side Persistence** - Tasks survive browser restarts, device changes, and are accessible from any location
+- **Real-Time Sync** - Changes are immediately saved to server when tasks are added, modified, or deleted
 
 ## Coding Rules
 

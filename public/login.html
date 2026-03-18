@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>Login to Your To-Do List</h1>
+        <h1 id="formTitle">Login to Your To-Do List</h1>
         <form id="loginForm">
             <div class="form-group">
                 <label for="username">Username:</label>
@@ -20,9 +20,12 @@
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit" class="login-btn">Login</button>
+            <button type="submit" id="submitBtn" class="login-btn">Login</button>
         </form>
         <div id="errorMessage" class="error-message"></div>
+        <div class="signup-link">
+            <a href="#" id="toggleMode">Don't have an account? Sign Up</a>
+        </div>
     </div>
     <script src="login-script.js"></script>
 </body>
