@@ -1,5 +1,5 @@
 /*
-  script.js - To-Do List Logic (with persistence, edit mode, and Enter key support)
+  script.js - To-Do List Logic with Event Delegation, Persistence, and Accessibility
 
   Data Stored in localStorage:
   - Key: "todoTasks"
@@ -29,17 +29,14 @@ const STORAGE_KEY = 'todoTasks';
 // In-memory list of tasks (kept in sync with localStorage)
 let tasks = [];
 
-
-/*
-  STEP 1: Initialize app
-  Load tasks from localStorage and render them.
-*/
+// Initialize app by loading tasks from localStorage and rendering them
 function init() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
     try {
       tasks = JSON.parse(saved);
     } catch (e) {
+      // If parsing fails due to corrupted data, reset to empty array
       tasks = [];
     }
   }
@@ -47,35 +44,60 @@ function init() {
   tasks.forEach((task) => addTaskToDOM(task));
 }
 
-
-/*
-  STEP 2: Persist tasks to localStorage
-*/
+// Persist the current tasks array to localStorage
 function saveTasks() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 }
 
-
-/*
-  STEP 3: Enter key support
-  Pressing Enter in the input triggers the same behavior as clicking Add Task.
-*/
+// Add event listener for Enter key in the input field to submit tasks
 taskInput.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
     addTask();
   }
 });
 
-
-/*
-  STEP 4: Add Task button handler
-*/
+// Add event listener for the Add Task button click
 addButton.addEventListener('click', addTask);
 
+// Use event delegation on the task list to handle all task-related clicks
+taskList.addEventListener('click', (event) => {
+  const target = event.target;
+  const listItem = target.closest('.task-item');
+  if (!listItem) return;
 
-/*
-  STEP 5: Add a new task
-*/
+  const taskId = parseInt(listItem.dataset.id);
+  const task = tasks.find((t) => t.id === taskId);
+  if (!task) return;
+
+  if (target.classList.contains('done-btn')) {
+    // Toggle the completed state of the task
+    listItem.classList.toggle('completed');
+    task.completed = listItem.classList.contains('completed');
+    saveTasks();
+  } else if (target.classList.contains('delete-btn')) {
+    // Remove the task from the DOM and from the tasks array
+    listItem.remove();
+    tasks = tasks.filter((t) => t.id !== taskId);
+    saveTasks();
+  } else if (target.classList.contains('edit-btn')) {
+    // Enter edit mode for the task
+    enterEditMode(task, listItem.querySelector('.task-text'));
+  }
+});
+
+// Also handle double-click on task text for editing
+taskList.addEventListener('dblclick', (event) => {
+  if (event.target.classList.contains('task-text')) {
+    const listItem = event.target.closest('.task-item');
+    const taskId = parseInt(listItem.dataset.id);
+    const task = tasks.find((t) => t.id === taskId);
+    if (task) {
+      enterEditMode(task, event.target);
+    }
+  }
+});
+
+// Create and add a new task to the list
 function addTask() {
   const taskText = taskInput.value.trim();
   if (!taskText) {
@@ -83,7 +105,7 @@ function addTask() {
   }
 
   const newTask = {
-    id: Date.now(),
+    id: Date.now(),  // Generate unique ID using current timestamp
     text: taskText,
     timestamp: formatCurrentTime(),
     completed: false,
@@ -97,10 +119,7 @@ function addTask() {
   taskInput.focus();
 }
 
-
-/*
-  STEP 6: Format the current local time as HH:MM AM/PM
-*/
+// Format the current local time as HH:MM AM/PM
 function formatCurrentTime() {
   const now = new Date();
   const hours = now.getHours();
@@ -111,41 +130,37 @@ function formatCurrentTime() {
   return `${formattedHour}:${formattedMinutes} ${isPM ? 'PM' : 'AM'}`;
 }
 
-
-/*
-  STEP 7: Render a task object into the DOM
-*/
+// Render a task object into the DOM with accessibility attributes
 function addTaskToDOM(task) {
   const listItem = document.createElement('li');
   listItem.className = 'task-item';
   listItem.dataset.id = task.id;
 
-  // Content: text + timestamp
+  // Task text at top
   const taskSpan = document.createElement('span');
   taskSpan.className = 'task-text';
-  taskSpan.textContent = task.text;
+  taskSpan.textContent = task.text;  // Use textContent to prevent XSS
 
+  // Bottom footer row: timestamp on left, buttons on right
   const timeSpan = document.createElement('span');
   timeSpan.className = 'task-timestamp';
   timeSpan.textContent = task.timestamp;
 
-  const contentContainer = document.createElement('div');
-  contentContainer.className = 'task-content';
-  contentContainer.appendChild(taskSpan);
-  contentContainer.appendChild(timeSpan);
-
-  // Action buttons: Done / Edit / Delete
+  // Action buttons: Done / Edit / Delete with aria-labels for accessibility
   const doneButton = document.createElement('button');
   doneButton.textContent = '✓';
   doneButton.className = 'done-btn';
+  doneButton.setAttribute('aria-label', 'Mark task as done');
 
   const editButton = document.createElement('button');
   editButton.textContent = '✏️';
   editButton.className = 'edit-btn';
+  editButton.setAttribute('aria-label', 'Edit task');
 
   const deleteButton = document.createElement('button');
   deleteButton.textContent = '✕';
   deleteButton.className = 'delete-btn';
+  deleteButton.setAttribute('aria-label', 'Delete task');
 
   const actionContainer = document.createElement('div');
   actionContainer.className = 'task-actions';
@@ -153,42 +168,28 @@ function addTaskToDOM(task) {
   actionContainer.appendChild(editButton);
   actionContainer.appendChild(deleteButton);
 
+  // Footer: timestamp + actions on same line
+  const footerContainer = document.createElement('div');
+  footerContainer.className = 'task-footer';
+  footerContainer.appendChild(timeSpan);
+  footerContainer.appendChild(actionContainer);
+
+  // Content: wraps text + footer
+  const contentContainer = document.createElement('div');
+  contentContainer.className = 'task-content';
+  contentContainer.appendChild(taskSpan);
+  contentContainer.appendChild(footerContainer);
+
   listItem.appendChild(contentContainer);
-  listItem.appendChild(actionContainer);
 
   if (task.completed) {
     listItem.classList.add('completed');
   }
 
-  // Toggle completed state
-  doneButton.addEventListener('click', () => {
-    listItem.classList.toggle('completed');
-    const index = tasks.findIndex((t) => t.id === task.id);
-    if (index !== -1) {
-      tasks[index].completed = listItem.classList.contains('completed');
-      saveTasks();
-    }
-  });
-
-  // Delete task
-  deleteButton.addEventListener('click', () => {
-    listItem.remove();
-    tasks = tasks.filter((t) => t.id !== task.id);
-    saveTasks();
-  });
-
-  // Edit task (via button or double-click)
-  const startEdit = () => enterEditMode(task, taskSpan);
-  editButton.addEventListener('click', startEdit);
-  taskSpan.addEventListener('dblclick', startEdit);
-
   taskList.appendChild(listItem);
 }
 
-
-/*
-  STEP 8: Edit-in-place functionality
-*/
+// Handle in-place editing of a task
 function enterEditMode(task, taskSpan) {
   const originalText = task.text;
 
@@ -206,7 +207,7 @@ function enterEditMode(task, taskSpan) {
 
     if (newText) {
       task.text = newText;
-      taskSpan.textContent = newText;
+      taskSpan.textContent = newText;  // Use textContent to prevent XSS
 
       const index = tasks.findIndex((t) => t.id === task.id);
       if (index !== -1) {
@@ -226,7 +227,6 @@ function enterEditMode(task, taskSpan) {
 
   editInput.addEventListener('blur', saveChanges);
 }
-
 
 // Initialize the app when the script loads
 init();

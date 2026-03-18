@@ -1,15 +1,15 @@
 /* 
-  DARK MODE TO-DO LIST STYLING
+  Dark mode to-do list styling
   A bold, sleek, modern design with navy blue, dark gray, and rustic gold.
-  
-  STEP 1: Global Reset and Base Styling
-  We reset all default browser styles and create a dark mode foundation.
+
+  Global CSS Reset and Base Styling
+  Resets default browser styles and applies base styles to all elements.
 */
 
 * {
-  /* 
-    STEP 2: Universal selector - applies to ALL elements
-    
+  /*
+    Universal selector - applies to ALL elements
+
     margin: 0 - Removes default spacing
     padding: 0 - Removes default internal spacing
     box-sizing: border-box - Width/height includes padding and borders
@@ -19,10 +19,18 @@
   box-sizing: border-box;
 }
 
-/* 
-  STEP 3: Body styling - the foundation of dark mode
+/*
+  Body styling - the foundation of dark mode
   This styles the entire page background and text.
 */
+html, body {
+  /* Ensure the background color spans full viewport height */
+  height: 100%;
+  min-height: 100vh;
+  background-color: #0a0f18;
+  margin: 0;
+}
+
 body {
   /* 
     Font family: modern, clean fonts with sans-serif fallback
@@ -30,12 +38,10 @@ body {
   */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   
-  /* 
-    Background color: very deep navy/near-black (#0a0f18)
-    This creates a dark, sophisticated backdrop
-    It's darker than pure black to avoid harshness on the eyes
-  */
-  background-color: #0a0f18;
+  /* Keep the background fixed during scroll for a stable dark backdrop */
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
   
   /* Text color: light gray for excellent contrast against dark background */
   color: #e0e0e0;
@@ -44,8 +50,8 @@ body {
   line-height: 1.6;
 }
 
-/* 
-  STEP 4: Container class - the main card styling
+/*
+  Container class - the main card styling
   This is the sleek dark gray box that holds all our to-do list content.
 */
 .container {
@@ -82,8 +88,8 @@ body {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* 
-  STEP 5: Header styling
+/*
+  Header styling
   This styles the title section at the top.
 */
 header {
@@ -103,8 +109,8 @@ header {
   border-bottom: 3px solid #C5A059;
 }
 
-/* 
-  STEP 6: H1 (main heading) styling
+/*
+  H1 (main heading) styling
   This styles the "My To-Do List" title text.
 */
 h1 {
@@ -136,8 +142,8 @@ h1 {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* 
-  STEP 7: Input section styling
+/*
+  Input section styling
   This wraps the input field and button area.
 */
 .input-section {
@@ -145,8 +151,8 @@ h1 {
   margin-bottom: 30px;
 }
 
-/* 
-  STEP 8: Input container styling
+/*
+  Input container styling
   This uses Flexbox to arrange the input field and button side-by-side.
 */
 .input-container {
@@ -166,8 +172,8 @@ h1 {
   align-items: center;
 }
 
-/* 
-  STEP 9: Task input field styling
+/*
+  Task input field styling
   This styles the text box where users type new tasks.
 */
 .task-input {
@@ -214,8 +220,8 @@ h1 {
   transition: all 0.3s ease;
 }
 
-/* 
-  STEP 10: Input field placeholder styling
+/*
+  Input field placeholder styling
   This styles the gray hint text that appears when the input is empty.
 */
 .task-input::placeholder {
@@ -226,8 +232,8 @@ h1 {
   color: #666;
 }
 
-/* 
-  STEP 11: Input field focus state
+/*
+  Input field focus state
   This styles the input field when the user clicks on it (focuses it).
 */
 .task-input:focus {
@@ -256,8 +262,8 @@ h1 {
   box-shadow: 0 0 12px rgba(197, 160, 89, 0.3);
 }
 
-/* 
-  STEP 12: Add button styling
+/*
+  Add button styling
   This styles the "Add Task" button - the primary action button.
 */
 .add-btn {
@@ -307,8 +313,8 @@ h1 {
   box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
 }
 
-/* 
-  STEP 13: Add button hover state
+/*
+  Add button hover state
   This styles the button when the user hovers their mouse over it.
 */
 .add-btn:hover {
@@ -331,8 +337,8 @@ h1 {
   box-shadow: 0 6px 20px rgba(197, 160, 89, 0.35);
 }
 
-/* 
-  STEP 14: Add button active state
+/*
+  Add button active state
   This styles the button when the user clicks it (presses down).
 */
 .add-btn:active {
@@ -346,35 +352,39 @@ h1 {
   box-shadow: 0 2px 8px rgba(197, 160, 89, 0.2);
 }
 
-/* 
-  STEP 15: Task section styling
+/*
+  Task section styling
   This container wraps the task list.
 */
 .task-section {
   /* No additional styling needed - the list inside has its own styles */
 }
 
-/* 
-  STEP 16: Task list (ul) styling
+/*
+  Task list (ul) styling
   This styles the unordered list container.
 */
 .task-list {
-  /* 
+  /*
     List style: none removes bullet points
     We want a clean, custom look without default list markers
   */
   list-style: none;
-  
+
+  /* Remove default padding and margin to align with input box above */
+  padding: 0;
+  margin: 0;
+
   /* Display: flex with column direction stacks items vertically */
   display: flex;
   flex-direction: column;
-  
+
   /* Gap: 10px adds space between each task item */
   gap: 10px;
 }
 
-/* 
-  STEP 17: Individual task card styling
+/*
+  Individual task card styling
   Each task item is styled as a sleek dark card with rounded corners.
 */
 .task-item {
@@ -393,28 +403,33 @@ h1 {
   /* Box shadow: subtle shadow to make the card pop off the background */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   
-  /* Layout: flex to separate content and action buttons */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  
   /* Transition: smooth changes for hover and completed states */
   transition: background-color 0.3s ease, opacity 0.3s ease;
 }
 
-/* 
-  STEP 18: Task content styling
-  Wraps the task text and timestamp together.
+/*
+  Task content styling
+  Stacks text on top, footer below with timestamp and buttons.
 */
 .task-content {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  max-width: 80%;
+  gap: 8px;
 }
 
-/* 
-  STEP 19: Task text styling
+/*
+  Task footer row
+  Places timestamp on left and action buttons on right.
+*/
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+/*
+  Task text styling
   Uses modern typography matching the theme.
 */
 .task-text {
@@ -422,10 +437,14 @@ h1 {
   font-weight: 600;
   color: #e0e0e0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  /* Word wrapping to prevent text overflow */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
-/* 
-  STEP 19b: Edit input styling
+/*
+  Edit input styling
   When a task is being edited, this input appears in its place.
 */
 .task-edit-input {
@@ -445,8 +464,8 @@ h1 {
   box-shadow: 0 0 10px rgba(197, 160, 89, 0.3);
 }
 
-/* 
-  STEP 20: Timestamp styling
+/*
+  Timestamp styling
   Makes the timestamp smaller and muted so it doesn't distract.
 */
 .task-timestamp {
@@ -454,18 +473,18 @@ h1 {
   color: #7a7a7a;
 }
 
-/* 
-  STEP 21: Action buttons container
-  Aligns the Done/Delete buttons together.
+/*
+  Action buttons container
+  Groups the Done/Edit/Delete buttons together.
 */
 .task-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
 }
 
-/* 
-  STEP 22: Minimal action button styling
+/*
+  Minimal action button styling
   Uses a transparent background and subtle hover feedback.
 */
 .task-actions button {
@@ -479,8 +498,8 @@ h1 {
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-/* 
-  STEP 23: Edit button styling
+/*
+  Edit button styling
   Matches the action buttons, with a soft hover highlight.
 */
 .edit-btn:hover {
@@ -490,7 +509,16 @@ h1 {
 }
 
 /* 
-  STEP 24: Done button hover state
+  Edit button focus state for keyboard navigation
+  Provides a rustic gold outline for accessibility.
+*/
+.edit-btn:focus {
+  outline: 2px solid #C5A059;
+  outline-offset: 2px;
+}
+
+/*
+  Done button hover state
   Gives a rustic gold highlight when hovering.
 */
 .done-btn:hover {
@@ -500,7 +528,16 @@ h1 {
 }
 
 /* 
-  STEP 24: Delete button hover state
+  Done button focus state for keyboard navigation
+  Provides a rustic gold outline for accessibility.
+*/
+.done-btn:focus {
+  outline: 2px solid #C5A059;
+  outline-offset: 2px;
+}
+
+/*
+  Delete button hover state
   Provides a muted red hover for clear removal action.
 */
 .delete-btn:hover {
@@ -510,7 +547,16 @@ h1 {
 }
 
 /* 
-  STEP 25: Completed task styling
+  Delete button focus state for keyboard navigation
+  Provides a rustic gold outline for accessibility.
+*/
+.delete-btn:focus {
+  outline: 2px solid #C5A059;
+  outline-offset: 2px;
+}
+
+/*
+  Completed task styling
   When a task is marked done, dim the card and strike through text.
 */
 .task-item.completed {
@@ -522,13 +568,13 @@ h1 {
   color: #999;
 }
 
-/* 
-  STEP 26: Responsive design for mobile devices
+/*
+  Responsive design for mobile devices
   These rules apply when the screen is 600px or smaller (phones).
 */
 @media (max-width: 600px) {
-  /* 
-    STEP 18: Reduce container padding on mobile
+  /*
+    Reduce container padding on mobile
     Smaller padding maximizes space on small screens
   */
   .container {
@@ -537,8 +583,8 @@ h1 {
     border-radius: 12px;
   }
 
-  /* 
-    STEP 19: Adjust heading size for mobile
+  /*
+    Adjust heading size for mobile
     Smaller font size so the title fits better on phones
   */
   h1 {
@@ -546,8 +592,8 @@ h1 {
     letter-spacing: 1px;
   }
 
-  /* 
-    STEP 20: Stack input and button vertically on mobile
+  /*
+    Stack input and button vertically on mobile
     flex-wrap: wrap allows items to wrap to the next line
   */
   .input-container {
@@ -555,16 +601,16 @@ h1 {
     gap: 10px;
   }
 
-  /* 
-    STEP 21: Make input field full width on mobile
+  /*
+    Make input field full width on mobile
     flex: 1 0 100% forces the input to take 100% width
   */
   .task-input {
     flex: 1 0 100%;
   }
 
-  /* 
-    STEP 22: Make button full width on mobile
+  /*
+    Make button full width on mobile
     Now the button appears below the input field
   */
   .add-btn {
