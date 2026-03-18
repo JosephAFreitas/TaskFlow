@@ -7,13 +7,42 @@
 3. **Implement Basic CRUD Operations** - Enable Create (add tasks), Read (display tasks), Update (mark complete), and Delete (remove tasks) functionality.
 4. **Build a Responsive Design** - Ensure the application is easy to use and looks decent on different screen sizes.
 5. **Learn Front-End Development Basics** - Gain hands-on experience with DOM manipulation, event handling, and styling.
+6. **Add Backend Authentication** - Implement a simple login system using Node.js and Express to practice server-side development.
+7. **Learn Full-Stack Development** - Understand how frontend and backend communicate, and how to structure a web application with both client and server components.
 
 ## Tech Stack
 
+### Frontend (Client-Side)
 - **HTML** - Structure and semantic markup for the application interface
 - **CSS** - Styling and layout for a clean, visually appealing design
 - **JavaScript** - Logic, interactivity, and DOM manipulation for dynamic functionality
 - **Browser APIs** - Uses built-in browser features (no external libraries or frameworks)
+
+### Backend (Server-Side)
+- **Node.js** - JavaScript runtime environment that allows running JavaScript on the server
+- **Express.js** - Web framework for Node.js that simplifies building web applications and APIs
+- **JSON File Storage** - Simple file-based storage for user data (users.json) to practice data persistence before using databases
+- **HTTP/HTTPS** - Standard web protocols for client-server communication
+
+## Backend Architecture
+
+### Server Structure
+- **server.js** - Main server file that starts the Express application and defines all routes
+- **users.json** - Simple JSON file acting as a mock database to store user credentials
+- **public/** - Folder containing all frontend files (HTML, CSS, JavaScript) served by the Express server
+
+### Authentication Flow
+1. **Login Page** - User visits the site and sees a login form asking for username and password
+2. **Credential Verification** - Server checks submitted credentials against users.json file
+3. **Session Management** - Upon successful login, server tracks the logged-in user for the session
+4. **Protected Routes** - To-do list page requires authentication; unauthenticated users are redirected to login
+5. **Dynamic Content** - To-do list title displays the logged-in user's name (e.g., "Jose's To-Do List")
+
+### Client-Server Communication
+- **HTTP Requests** - Frontend uses fetch() API to send requests to backend endpoints
+- **RESTful Routes** - Server provides endpoints like /login (POST), /logout (POST), /api/current-user (GET)
+- **JSON Data Exchange** - All data between frontend and backend is sent as JSON objects
+- **CORS Handling** - Server configured to allow requests from the frontend domain
 
 ## Coding Rules
 
@@ -33,6 +62,12 @@ This ensures the codebase remains easy to understand and learn from during the d
 ### 3. Test Functionality as You Build
 - Test changes in the browser immediately after writing code
 - Verify that new features work as expected before moving to the next feature
+- Test both frontend and backend components separately and together
+
+### 4. Security First (Even for Learning)
+- Never store passwords in plain text (we'll add basic hashing later)
+- Validate all user inputs on both client and server side
+- Use HTTPS in production (though we'll use HTTP for local development)
 
 ---
 
