@@ -1,49 +1,38 @@
 /*
   script.js - To-Do List Logic with Event Delegation, Persistence, and Accessibility
 
-  Data Stored in localStorage:
-  - Key: "todoTasks"
-  - Value: JSON string of an array of task objects:
-    [
-      {
-        id: <number>,         // unique identifier (Date.now())
-        text: <string>,       // task description
-        timestamp: <string>,  // formatted time (e.g., "2:45 PM")
-        completed: <boolean>  // true if task is marked done
-      }
-    ]
+  Data stored in localStorage as JSON array of task objects with id, text, timestamp, completed properties.
 */
 
-// Fetch the current logged-in username from the server and update the page title
+// Fetch current logged-in username and update page title
 async function loadUser() {
   try {
     const response = await fetch('/api/user');
     const data = await response.json();
     if (data.username) {
       document.querySelector('h1').textContent = `${data.username}'s To-Do List`;
+    } else {
+      window.location.href = 'login.html';
     }
   } catch (error) {
-    // If fetch fails or user not logged in, keep default title
     console.error('Failed to load user:', error);
+    window.location.href = 'login.html';
   }
 }
 
-// Select the text input where the user types a new task
+// DOM element selectors
 const taskInput = document.querySelector('#taskInput');
-
-// Select the "Add Task" button that the user clicks to add a task
 const addButton = document.querySelector('#addBtn');
-
-// Select the <ul> element where task items will be added
 const taskList = document.querySelector('#taskList');
+const logoutButton = document.querySelector('#logoutBtn');
 
-// Storage key used for localStorage
+// localStorage key for tasks
 const STORAGE_KEY = 'todoTasks';
 
-// In-memory list of tasks (kept in sync with localStorage)
+// In-memory tasks array
 let tasks = [];
 
-// Initialize app by loading user and tasks from localStorage and rendering them
+// Initialize app by loading user and tasks
 async function init() {
   await loadUser();
 
@@ -60,22 +49,25 @@ async function init() {
   tasks.forEach((task) => addTaskToDOM(task));
 }
 
-// Persist the current tasks array to localStorage
+// Persist tasks to localStorage
 function saveTasks() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 }
 
-// Add event listener for Enter key in the input field to submit tasks
+// Handle Enter key in input field
 taskInput.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
     addTask();
   }
 });
 
-// Add event listener for the Add Task button click
+// Handle add button click
 addButton.addEventListener('click', addTask);
 
-// Use event delegation on the task list to handle all task-related clicks
+// Handle logout button click
+logoutButton.addEventListener('click', logout);
+
+// Event delegation for task actions
 taskList.addEventListener('click', (event) => {
   const target = event.target;
   const listItem = target.closest('.task-item');
@@ -86,22 +78,19 @@ taskList.addEventListener('click', (event) => {
   if (!task) return;
 
   if (target.classList.contains('done-btn')) {
-    // Toggle the completed state of the task
     listItem.classList.toggle('completed');
     task.completed = listItem.classList.contains('completed');
     saveTasks();
   } else if (target.classList.contains('delete-btn')) {
-    // Remove the task from the DOM and from the tasks array
     listItem.remove();
     tasks = tasks.filter((t) => t.id !== taskId);
     saveTasks();
   } else if (target.classList.contains('edit-btn')) {
-    // Enter edit mode for the task
     enterEditMode(task, listItem.querySelector('.task-text'));
   }
 });
 
-// Also handle double-click on task text for editing
+// Handle double-click for editing
 taskList.addEventListener('dblclick', (event) => {
   if (event.target.classList.contains('task-text')) {
     const listItem = event.target.closest('.task-item');
@@ -113,7 +102,7 @@ taskList.addEventListener('dblclick', (event) => {
   }
 });
 
-// Create and add a new task to the list
+// Add new task from input
 function addTask() {
   const taskText = taskInput.value.trim();
   if (!taskText) {
@@ -121,7 +110,7 @@ function addTask() {
   }
 
   const newTask = {
-    id: Date.now(),  // Generate unique ID using current timestamp
+    id: Date.now(),
     text: taskText,
     timestamp: formatCurrentTime(),
     completed: false,
@@ -135,7 +124,22 @@ function addTask() {
   taskInput.focus();
 }
 
-// Format the current local time as HH:MM AM/PM
+// Handle user logout
+async function logout() {
+  console.log('Logout clicked');
+  try {
+    const response = await fetch('/logout');
+    const data = await response.json();
+    console.log('Logout response:', data);
+    if (data.success) {
+      window.location.href = 'login.html';
+    }
+  } catch (error) {
+    console.error('Logout failed:', error);
+  }
+}
+
+// Format current time as HH:MM AM/PM
 function formatCurrentTime() {
   const now = new Date();
   const hours = now.getHours();
@@ -146,23 +150,20 @@ function formatCurrentTime() {
   return `${formattedHour}:${formattedMinutes} ${isPM ? 'PM' : 'AM'}`;
 }
 
-// Render a task object into the DOM with accessibility attributes
+// Render task to DOM
 function addTaskToDOM(task) {
   const listItem = document.createElement('li');
   listItem.className = 'task-item';
   listItem.dataset.id = task.id;
 
-  // Task text at top
   const taskSpan = document.createElement('span');
   taskSpan.className = 'task-text';
-  taskSpan.textContent = task.text;  // Use textContent to prevent XSS
+  taskSpan.textContent = task.text;
 
-  // Bottom footer row: timestamp on left, buttons on right
   const timeSpan = document.createElement('span');
-  timeSpan.className = 'task-timestamp';
+  timeSpan.className = 'task-time';
   timeSpan.textContent = task.timestamp;
 
-  // Action buttons: Done / Edit / Delete with aria-labels for accessibility
   const doneButton = document.createElement('button');
   doneButton.textContent = '✓';
   doneButton.className = 'done-btn';
@@ -184,13 +185,11 @@ function addTaskToDOM(task) {
   actionContainer.appendChild(editButton);
   actionContainer.appendChild(deleteButton);
 
-  // Footer: timestamp + actions on same line
   const footerContainer = document.createElement('div');
   footerContainer.className = 'task-footer';
   footerContainer.appendChild(timeSpan);
   footerContainer.appendChild(actionContainer);
 
-  // Content: wraps text + footer
   const contentContainer = document.createElement('div');
   contentContainer.className = 'task-content';
   contentContainer.appendChild(taskSpan);
@@ -205,7 +204,7 @@ function addTaskToDOM(task) {
   taskList.appendChild(listItem);
 }
 
-// Handle in-place editing of a task
+// Enter edit mode for task
 function enterEditMode(task, taskSpan) {
   const originalText = task.text;
 
@@ -223,7 +222,7 @@ function enterEditMode(task, taskSpan) {
 
     if (newText) {
       task.text = newText;
-      taskSpan.textContent = newText;  // Use textContent to prevent XSS
+      taskSpan.textContent = newText;
 
       const index = tasks.findIndex((t) => t.id === task.id);
       if (index !== -1) {
@@ -244,5 +243,5 @@ function enterEditMode(task, taskSpan) {
   editInput.addEventListener('blur', saveChanges);
 }
 
-// Initialize the app when the script loads
+// Initialize app on load
 init();

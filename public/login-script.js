@@ -1,4 +1,6 @@
-// Handle form submission for login
+// Login form handling
+
+// Handle form submission
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -17,10 +19,8 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         const data = await response.json();
 
         if (data.success) {
-            // Redirect to index.html on successful login
             window.location.href = 'index.html';
         } else {
-            // Display error message
             document.getElementById('errorMessage').textContent = data.error || 'Login failed';
         }
     } catch (error) {

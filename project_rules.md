@@ -37,10 +37,11 @@
 3. **Session Management** - Upon successful login, server tracks the logged-in user for the session
 4. **Protected Routes** - To-do list page requires authentication; unauthenticated users are redirected to login
 5. **Dynamic Content** - To-do list title displays the logged-in user's name (e.g., "Jose's To-Do List")
+6. **Logout Functionality** - User can log out to clear session and return to login page
 
 ### Client-Server Communication
 - **HTTP Requests** - Frontend uses fetch() API to send requests to backend endpoints
-- **RESTful Routes** - Server provides endpoints like /login (POST), /logout (POST), /api/current-user (GET)
+- **RESTful Routes** - Server provides endpoints like /login (POST), /logout (GET), /api/user (GET)
 - **JSON Data Exchange** - All data between frontend and backend is sent as JSON objects
 - **CORS Handling** - Server configured to allow requests from the frontend domain
 
@@ -68,6 +69,13 @@ This ensures the codebase remains easy to understand and learn from during the d
 - Never store passwords in plain text (we'll add basic hashing later)
 - Validate all user inputs on both client and server side
 - Use HTTPS in production (though we'll use HTTP for local development)
+
+### 5. Professional Comment Styling
+- Add a single, sleek comment block at the top of each file describing its primary responsibility
+- Comments must be technical and concise, describing logic without tutorial language
+- Remove all 'Step 1', 'Step 2', or instructional phrasing
+- Ensure consistent spacing and capitalization across all comments
+- Preserve functional code and styling when refactoring comments
 
 ---
 

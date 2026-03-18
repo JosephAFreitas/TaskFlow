@@ -1,30 +1,14 @@
-/* 
-  Dark mode to-do list styling
-  A bold, sleek, modern design with navy blue, dark gray, and rustic gold.
+/* Application styling and layout */
 
-  Global CSS Reset and Base Styling
-  Resets default browser styles and applies base styles to all elements.
-*/
-
+/* Global reset and base styles */
 * {
-  /*
-    Universal selector - applies to ALL elements
-
-    margin: 0 - Removes default spacing
-    padding: 0 - Removes default internal spacing
-    box-sizing: border-box - Width/height includes padding and borders
-  */
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/*
-  Body styling - the foundation of dark mode
-  This styles the entire page background and text.
-*/
+/* Full viewport background and typography */
 html, body {
-  /* Ensure the background color spans full viewport height */
   height: 100%;
   min-height: 100vh;
   background-color: #0a0f18;
@@ -32,21 +16,11 @@ html, body {
 }
 
 body {
-  /* 
-    Font family: modern, clean fonts with sans-serif fallback
-    'Segoe UI' is a contemporary font that looks sleek
-  */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  
-  /* Keep the background fixed during scroll for a stable dark backdrop */
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
-  
-  /* Text color: light gray for excellent contrast against dark background */
   color: #e0e0e0;
-  
-  /* Line height: adds breathing room between lines of text */
   line-height: 1.6;
 }
 
@@ -54,121 +28,46 @@ body {
   Container class - the main card styling
   This is the sleek dark gray box that holds all our to-do list content.
 */
+/* Main content container */
 .container {
-  /* Maximum width: limits how wide the content stretches */
   max-width: 600px;
-  
-  /* 
-    Margin: centers the container horizontally
-    20px on top/bottom adds spacing from edges
-  */
   margin: 30px auto;
-  
-  /* Padding: internal spacing so content doesn't touch edges */
   padding: 40px;
-  
-  /* 
-    Background color: sleek dark gray (#1e1e1e)
-    Darker than the page background, creating visual hierarchy
-  */
   background-color: #1e1e1e;
-  
-  /* 
-    Border radius: 15px creates significantly rounded corners
-    This gives a modern, premium feel to the card
-  */
   border-radius: 15px;
-  
-  /* 
-    Box shadow: creates depth by making the container float above the background
-    0 10px 40px - shadow offset and blur
-    rgba(0, 0, 0, 0.4) - semi-transparent black shadow
-    The larger values create a more dramatic effect
-  */
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
-/*
-  Header styling
-  This styles the title section at the top.
-*/
+/* Header layout and typography */
 header {
-  /* Text alignment: centers the title */
   text-align: center;
-  
-  /* Margin bottom: creates space between header and input section */
   margin-bottom: 35px;
-  
-  /* Padding bottom: internal spacing under the header */
   padding-bottom: 25px;
-  
-  /* 
-    Border bottom: a gold line separating header from content
-    Using the rustic gold color for visual interest
-  */
   border-bottom: 3px solid #C5A059;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/*
-  H1 (main heading) styling
-  This styles the "My To-Do List" title text.
-*/
+/* Main heading styling */
 h1 {
-  /* 
-    Font size: 3em is very large and commands attention
-    em units are relative, making it scalable
-  */
   font-size: 3em;
-  
-  /* Font weight: 700 is bold, making the text heavy and impactful */
   font-weight: 700;
-  
-  /* 
-    Color: rustic gold (#C5A059)
-    This warm, metallic gold contrasts beautifully with the dark background
-  */
   color: #C5A059;
-  
-  /* 
-    Letter spacing: 2px adds space between letters
-    This creates an elegant, spaced-out look for the title
-  */
   letter-spacing: 2px;
-  
-  /* Text transform: uppercase makes all letters capital for drama */
   text-transform: uppercase;
-  
-  /* Text shadow: adds a subtle dark shadow behind the text for depth */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/*
-  Input section styling
-  This wraps the input field and button area.
-*/
+/* Input section layout */
 .input-section {
-  /* Margin bottom: creates space between input area and task list */
   margin-bottom: 30px;
 }
 
-/*
-  Input container styling
-  This uses Flexbox to arrange the input field and button side-by-side.
-*/
+/* Flexbox container for input and button */
 .input-container {
-  /* 
-    Display: flex enables Flexbox layout
-    This modern layout system arranges items in a row
-  */
   display: flex;
-  
-  /* 
-    Gap: 12px adds space between the input field and button
-    Creates clean separation between the two elements
-  */
   gap: 12px;
-  
-  /* Align items: center vertically aligns the input and button */
   align-items: center;
 }
 
@@ -176,251 +75,116 @@ h1 {
   Task input field styling
   This styles the text box where users type new tasks.
 */
+/* Task input field styling */
 .task-input {
-  /* 
-    Flex: 1 makes the input grow and take up available space
-    This pushes the button to the right side
-  */
   flex: 1;
-  
-  /* Padding: 15px creates comfortable space inside the input */
   padding: 15px 18px;
-  
-  /* Font size: 1.05em makes text slightly larger than normal */
   font-size: 1.05em;
-  
-  /* 
-    Background color: dark gray (#2a2a2a)
-    Slightly lighter than the container so it stands out as an input field
-  */
   background-color: #2a2a2a;
-  
-  /* 
-    Color: light gray (#b0b0b0)
-    Provides good contrast for readability in dark mode
-  */
   color: #b0b0b0;
-  
-  /* 
-    Border: 2px solid uses a thicker border
-    Gray border that will change to gold on focus
-  */
   border: 2px solid #3a3a3a;
-  
-  /* 
-    Border radius: 8px rounds the corners slightly
-    Not as rounded as the container, creating visual hierarchy
-  */
   border-radius: 8px;
-  
-  /* 
-    Transition: all 0.3s ease smoothly animates ALL properties
-    This creates smooth color and shadow transitions
-  */
   transition: all 0.3s ease;
 }
 
-/*
-  Input field placeholder styling
-  This styles the gray hint text that appears when the input is empty.
-*/
+/* Placeholder text styling */
 .task-input::placeholder {
-  /* 
-    Color: slightly lighter gray for placeholder text
-    Makes it clearly different from actual user input
-  */
   color: #666;
 }
 
-/*
-  Input field focus state
-  This styles the input field when the user clicks on it (focuses it).
-*/
+/* Input focus state */
 .task-input:focus {
-  /* 
-    Outline: none removes the default browser outline
-    We replace it with our custom border and shadow below
-  */
   outline: none;
-  
-  /* 
-    Border color: changes to rustic gold (#C5A059)
-    This gives clear visual feedback that the field is active
-  */
   border-color: #C5A059;
-  
-  /* 
-    Background color: slightly lighter when focused
-    Makes the field feel more active and interactive
-  */
   background-color: #333333;
-  
-  /* 
-    Box shadow: adds a golden glow effect around the field
-    rgba(197, 160, 89, 0.4) creates a subtle gold halo
-  */
   box-shadow: 0 0 12px rgba(197, 160, 89, 0.3);
 }
 
-/*
-  Add button styling
-  This styles the "Add Task" button - the primary action button.
-*/
+/* Add button styling */
 .add-btn {
-  /* Padding: 15px 32px creates a large, clickable button */
   padding: 15px 32px;
-  
-  /* Font size: 1.05em makes button text slightly larger */
   font-size: 1.05em;
-  
-  /* Font weight: 700 is bold - very prominent */
   font-weight: 700;
-  
-  /* 
-    Background color: rustic gold (#C5A059)
-    This warm, luxurious color stands out as the primary action
-  */
   background-color: #C5A059;
-  
-  /* 
-    Color: very dark gray/near-black text (#0a0f18)
-    High contrast with the gold background for readability
-  */
   color: #0a0f18;
-  
-  /* Border: none removes any default button border */
   border: none;
-  
-  /* Border radius: 8px rounds corners to match the input field */
   border-radius: 8px;
-  
-  /* 
-    Cursor: pointer changes mouse cursor to indicate clickability
-    Good UX - tells users the button is interactive
-  */
   cursor: pointer;
-  
-  /* 
-    Transition: all 0.3s ease smoothly animates ALL properties
-    This creates smooth transitions on hover and active states
-  */
   transition: all 0.3s ease;
-  
-  /* 
-    Box shadow: subtle shadow gives the button depth
-    Makes it appear elevated above the page
-  */
   box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
 }
 
-/*
-  Add button hover state
-  This styles the button when the user hovers their mouse over it.
-*/
+/* Add button hover state */
 .add-btn:hover {
-  /* 
-    Background color: slightly lighter/warmer gold
-    Creates visual feedback that the button is interactive
-  */
   background-color: #D4B896;
-  
-  /* 
-    Transform: scale(1.05) makes the button grow 5% larger
-    This growth effect creates an appealing "lift" sensation
-  */
   transform: scale(1.05);
-  
-  /* 
-    Box shadow: larger shadow makes the button appear to lift off the page
-    The larger shadow distance creates a more dramatic effect
-  */
   box-shadow: 0 6px 20px rgba(197, 160, 89, 0.35);
 }
 
-/*
-  Add button active state
-  This styles the button when the user clicks it (presses down).
-*/
+/* Add button active state */
 .add-btn:active {
-  /* 
-    Transform: scale(0.98) makes the button shrink slightly
-    This creates a "pressed" effect - like pushing a real button
-  */
   transform: scale(0.98);
-  
-  /* Box shadow: smaller shadow makes button feel "pressed" into the page */
   box-shadow: 0 2px 8px rgba(197, 160, 89, 0.2);
 }
 
-/*
-  Task section styling
-  This container wraps the task list.
-*/
-.task-section {
-  /* No additional styling needed - the list inside has its own styles */
+/* Logout button styling */
+.logout-btn {
+  padding: 8px 16px;
+  font-size: 0.9em;
+  font-weight: 600;
+  background-color: #C5A059;
+  color: #0a0f18;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(197, 160, 89, 0.2);
 }
 
-/*
-  Task list (ul) styling
-  This styles the unordered list container.
-*/
-.task-list {
-  /*
-    List style: none removes bullet points
-    We want a clean, custom look without default list markers
-  */
-  list-style: none;
+/* Logout button hover state */
+.logout-btn:hover {
+  background-color: #D4B896;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(197, 160, 89, 0.35);
+}
 
-  /* Remove default padding and margin to align with input box above */
+/* Logout button active state */
+.logout-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(197, 160, 89, 0.2);
+}
+
+/* Task section container */
+.task-section {
+}
+
+/* Task list styling */
+.task-list {
+  list-style: none;
   padding: 0;
   margin: 0;
-
-  /* Display: flex with column direction stacks items vertically */
   display: flex;
   flex-direction: column;
-
-  /* Gap: 10px adds space between each task item */
   gap: 10px;
 }
 
-/*
-  Individual task card styling
-  Each task item is styled as a sleek dark card with rounded corners.
-*/
+/* Individual task item styling */
 .task-item {
-  /* 
-    Background color: slightly lighter than the container
-    This makes each task stand out as a card
-  */
   background-color: #22272f;
-  
-  /* Padding: creates space inside the task card */
   padding: 15px 18px;
-  
-  /* Border radius: rounds the corners for a polished look */
   border-radius: 12px;
-  
-  /* Box shadow: subtle shadow to make the card pop off the background */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-  
-  /* Transition: smooth changes for hover and completed states */
   transition: background-color 0.3s ease, opacity 0.3s ease;
 }
 
-/*
-  Task content styling
-  Stacks text on top, footer below with timestamp and buttons.
-*/
+/* Task content layout */
 .task-content {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-/*
-  Task footer row
-  Places timestamp on left and action buttons on right.
-*/
+/* Task footer with timestamp and buttons */
 .task-footer {
   display: flex;
   justify-content: space-between;
@@ -428,25 +192,81 @@ h1 {
   gap: 10px;
 }
 
-/*
-  Task text styling
-  Uses modern typography matching the theme.
-*/
+/* Task text styling */
 .task-text {
   font-size: 1.05em;
   font-weight: 600;
   color: #e0e0e0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
-  /* Word wrapping to prevent text overflow */
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
 
-/*
-  Edit input styling
-  When a task is being edited, this input appears in its place.
-*/
+/* Task timestamp styling */
+.task-time {
+  font-size: 0.9em;
+  color: #888;
+  font-weight: 500;
+}
+
+/* Task actions button group */
+.task-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Task action buttons */
+.task-btn {
+  padding: 6px 12px;
+  font-size: 0.9em;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Done button styling */
+.done-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.done-btn:hover {
+  background-color: #45a049;
+}
+
+/* Edit button styling */
+.edit-btn {
+  background-color: #2196F3;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #0b7dda;
+}
+
+/* Delete button styling */
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #da190b;
+}
+
+/* Completed task styling */
+.task-item.completed {
+  background-color: #1a1a1a;
+  opacity: 0.7;
+}
+
+.task-item.completed .task-text {
+  text-decoration: line-through;
+  color: #666;
+}
+
+/* Edit input styling */
 .task-edit-input {
   width: 100%;
   padding: 10px 12px;

@@ -1,3 +1,5 @@
+// Main application server and authentication routes
+
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -5,20 +7,20 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
-// Middleware to parse JSON bodies
+// Parse JSON request bodies
 app.use(express.json());
 
-// Serve static files from the public directory
+// Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Global variable to track logged-in user (simple session for beginner)
+// Global variable for session tracking
 let loggedInUser = null;
 
-// POST route for login
+// Handle user login authentication
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
-    // Read users from users.json
+    // Read user data from JSON file
     fs.readFile(path.join(__dirname, 'users.json'), 'utf8', (err, data) => {
         if (err) {
             return res.status(500).json({ error: 'Server error reading users' });
@@ -36,7 +38,7 @@ app.post('/login', (req, res) => {
     });
 });
 
-// GET route for current user
+// Return current logged-in user
 app.get('/api/user', (req, res) => {
     if (loggedInUser) {
         res.json({ username: loggedInUser });
@@ -45,7 +47,13 @@ app.get('/api/user', (req, res) => {
     }
 });
 
-// Start the server
+// Handle user logout by clearing session
+app.get('/logout', (req, res) => {
+    loggedInUser = null;
+    res.json({ success: true });
+});
+
+// Start Express server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
