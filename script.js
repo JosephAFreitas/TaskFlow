@@ -22,7 +22,7 @@ addButton.addEventListener('click', addTask);
 
 /*
   STEP 3: Define the addTask function
-  This function reads the input value, creates a new task item, and appends it to the list.
+  This function reads the input value, creates a new task card, and appends it to the list.
 */
 function addTask() {
   // Read the current input value (trim removes leading/trailing spaces)
@@ -33,7 +33,7 @@ function addTask() {
     return;
   }
 
-  // Create a new list item (<li>) to hold the task text
+  // Create a new list item (<li>) to hold the task card
   const listItem = document.createElement('li');
   listItem.className = 'task-item';
 
@@ -41,6 +41,38 @@ function addTask() {
   const taskSpan = document.createElement('span');
   taskSpan.textContent = taskText;
   taskSpan.className = 'task-text';
+
+  // STEP: Create a timestamp (local device time) for when the task was added
+  const timestamp = new Date();
+
+  // Format the time as HH:MM AM/PM (e.g., "2:45 PM")
+  const hours = timestamp.getHours();
+  const minutes = timestamp.getMinutes();
+  const isPM = hours >= 12;
+  const formattedHour = ((hours + 11) % 12) + 1; // converts 0-23 to 1-12
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  const timeString = `${formattedHour}:${formattedMinutes} ${isPM ? 'PM' : 'AM'}`;
+
+  // Create an element to display the timestamp
+  const timeSpan = document.createElement('span');
+  timeSpan.textContent = timeString;
+  timeSpan.className = 'task-timestamp';
+
+  // Create a container for the text + timestamp to keep layout clean
+  const contentContainer = document.createElement('div');
+  contentContainer.className = 'task-content';
+  contentContainer.appendChild(taskSpan);
+  contentContainer.appendChild(timeSpan);
+
+  // Create a "Done" button to mark the task as completed
+  const doneButton = document.createElement('button');
+  doneButton.textContent = '✓';
+  doneButton.className = 'done-btn';
+
+  // Toggle the .completed state on the task item when Done is clicked
+  doneButton.addEventListener('click', () => {
+    listItem.classList.toggle('completed');
+  });
 
   // Create a delete button so the user can remove the task
   const deleteButton = document.createElement('button');
@@ -52,9 +84,15 @@ function addTask() {
     listItem.remove();
   });
 
-  // Add the task text and delete button into the list item
-  listItem.appendChild(taskSpan);
-  listItem.appendChild(deleteButton);
+  // Create a container for action buttons to keep them aligned
+  const actionContainer = document.createElement('div');
+  actionContainer.className = 'task-actions';
+  actionContainer.appendChild(doneButton);
+  actionContainer.appendChild(deleteButton);
+
+  // Add the content and action buttons into the list item
+  listItem.appendChild(contentContainer);
+  listItem.appendChild(actionContainer);
 
   // Append the new list item to the task list (<ul>)
   taskList.appendChild(listItem);

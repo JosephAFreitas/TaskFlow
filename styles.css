@@ -374,7 +374,125 @@ h1 {
 }
 
 /* 
-  STEP 17: Responsive design for mobile devices
+  STEP 17: Individual task card styling
+  Each task item is styled as a sleek dark card with rounded corners.
+*/
+.task-item {
+  /* 
+    Background color: slightly lighter than the container
+    This makes each task stand out as a card
+  */
+  background-color: #22272f;
+  
+  /* Padding: creates space inside the task card */
+  padding: 15px 18px;
+  
+  /* Border radius: rounds the corners for a polished look */
+  border-radius: 12px;
+  
+  /* Box shadow: subtle shadow to make the card pop off the background */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  
+  /* Layout: flex to separate content and action buttons */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  /* Transition: smooth changes for hover and completed states */
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+/* 
+  STEP 18: Task content styling
+  Wraps the task text and timestamp together.
+*/
+.task-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 80%;
+}
+
+/* 
+  STEP 19: Task text styling
+  Uses modern typography matching the theme.
+*/
+.task-text {
+  font-size: 1.05em;
+  font-weight: 600;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 
+  STEP 20: Timestamp styling
+  Makes the timestamp smaller and muted so it doesn't distract.
+*/
+.task-timestamp {
+  font-size: 0.85em;
+  color: #7a7a7a;
+}
+
+/* 
+  STEP 21: Action buttons container
+  Aligns the Done/Delete buttons together.
+*/
+.task-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* 
+  STEP 22: Minimal action button styling
+  Uses a transparent background and subtle hover feedback.
+*/
+.task-actions button {
+  background: transparent;
+  border: none;
+  color: #c0c0c0;
+  padding: 8px 10px;
+  font-size: 1.15em;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+/* 
+  STEP 23: Done button hover state
+  Gives a rustic gold highlight when hovering.
+*/
+.done-btn:hover {
+  background: rgba(197, 160, 89, 0.2);
+  color: #C5A059;
+  transform: translateY(-1px);
+}
+
+/* 
+  STEP 24: Delete button hover state
+  Provides a muted red hover for clear removal action.
+*/
+.delete-btn:hover {
+  background: rgba(255, 90, 90, 0.2);
+  color: #ff6b6b;
+  transform: translateY(-1px);
+}
+
+/* 
+  STEP 25: Completed task styling
+  When a task is marked done, dim the card and strike through text.
+*/
+.task-item.completed {
+  opacity: 0.68;
+}
+
+.task-item.completed .task-text {
+  text-decoration: line-through;
+  color: #999;
+}
+
+/* 
+  STEP 26: Responsive design for mobile devices
   These rules apply when the screen is 600px or smaller (phones).
 */
 @media (max-width: 600px) {
