@@ -10,6 +10,14 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
+    if (isSignupMode) {
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        if (password !== confirmPassword) {
+            document.getElementById('errorMessage').textContent = 'Passwords do not match';
+            return;
+        }
+    }
+
     const endpoint = isSignupMode ? '/signup' : '/login';
 
     try {
@@ -58,15 +66,21 @@ document.getElementById('toggleMode').addEventListener('click', (e) => {
     const formTitle = document.getElementById('formTitle');
     const submitBtn = document.getElementById('submitBtn');
     const toggleLink = document.getElementById('toggleMode');
+    const confirmPasswordGroup = document.getElementById('confirmPasswordGroup');
+    const passwordRequirements = document.getElementById('passwordRequirements');
 
     if (isSignupMode) {
         formTitle.textContent = 'Sign Up for To-Do List';
         submitBtn.textContent = 'Create Account';
         toggleLink.textContent = 'Already have an account? Login';
+        confirmPasswordGroup.style.display = 'block';
+        passwordRequirements.style.display = 'block';
     } else {
         formTitle.textContent = 'Login to Your To-Do List';
         submitBtn.textContent = 'Login';
         toggleLink.textContent = 'Don\'t have an account? Sign Up';
+        confirmPasswordGroup.style.display = 'none';
+        passwordRequirements.style.display = 'none';
     }
 
     // Clear any error messages

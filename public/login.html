@@ -19,6 +19,11 @@
             <div class="form-group">
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
+                <div id="passwordRequirements" class="requirements">Min 8 characters</div>
+            </div>
+            <div class="form-group" id="confirmPasswordGroup" style="display: none;">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword">
             </div>
             <button type="submit" id="submitBtn" class="login-btn">Login</button>
         </form>

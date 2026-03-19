@@ -57,6 +57,17 @@ h1 {
   letter-spacing: 2px;
   text-transform: uppercase;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin: 0;
+}
+
+/* Username truncation styling */
+.username {
+  display: inline-block;
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: top;
 }
 
 /* Input section layout */
@@ -139,6 +150,7 @@ h1 {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(197, 160, 89, 0.2);
+  white-space: nowrap;
 }
 
 /* Logout button hover state */
@@ -371,6 +383,13 @@ h1 {
 
 .signup-link a:hover {
   text-decoration: underline;
+}
+
+/* Requirements text styling */
+.requirements {
+  font-size: 0.85em;
+  color: #C5A059;
+  margin-top: 5px;
 }
 
 /*

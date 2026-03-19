@@ -35,6 +35,8 @@
 1. **Login Page** - User visits the site and sees a login form asking for username and password
 2. **Signup Option** - Users can toggle to signup mode to create new accounts
 3. **Account Creation** - New users provide username and password, checked for uniqueness
+   - Username: minimum 3 characters, letters and numbers only (no spaces/special characters)
+   - Password: minimum 8 characters
 4. **Credential Verification** - Server checks submitted credentials against users.json file
 5. **Password Hashing** - Passwords are stored using bcrypt; legacy plain-text passwords are upgraded on first successful login
 6. **Session Management** - Upon successful login, server tracks the logged-in user for the session
@@ -69,8 +71,7 @@ This ensures the codebase remains easy to understand and learn from during the d
 
 ### 4. Security First (Even for Learning)
 - Use bcrypt (salt rounds = 10) to hash passwords before storing them
-- Validate all user inputs on both client and server side
-- Use HTTPS in production (though we'll use HTTP for local development)
+- Validate all user inputs on both client and server side- Enforce strong username/password requirements on signup- Use HTTPS in production (though we'll use HTTP for local development)
 
 ### 5. Professional Comment Styling
 - Add a single, sleek comment block at the top of each file describing its primary responsibility

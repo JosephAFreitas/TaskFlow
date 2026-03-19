@@ -10,7 +10,8 @@ async function loadUser() {
     const response = await fetch('/api/user');
     const data = await response.json();
     if (data.username) {
-      document.querySelector('h1').textContent = `${data.username}'s To-Do List`;
+      const h1 = document.querySelector('h1');
+      h1.innerHTML = `<span class="username">${data.username}'s</span><br>To-Do List`;
     } else {
       window.location.href = 'login.html';
     }

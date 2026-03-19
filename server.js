@@ -84,6 +84,16 @@ app.post('/signup', (req, res) => {
         return res.status(400).json({ error: 'Username and password required' });
     }
 
+    // Validate username: at least 3 characters, no spaces or special characters
+    if (username.length < 3 || /[^a-zA-Z0-9]/.test(username)) {
+        return res.status(400).json({ error: 'Username must be at least 3 characters and contain only letters and numbers' });
+    }
+
+    // Validate password: at least 8 characters
+    if (password.length < 8) {
+        return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+    }
+
     // Read user data from JSON file
     fs.readFile(path.join(__dirname, 'users.json'), 'utf8', (err, data) => {
         if (err) {
