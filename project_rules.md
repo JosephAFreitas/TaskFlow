@@ -36,7 +36,8 @@
 2. **Signup Option** - Users can toggle to signup mode to create new accounts
 3. **Account Creation** - New users provide username and password, checked for uniqueness
 4. **Credential Verification** - Server checks submitted credentials against users.json file
-5. **Session Management** - Upon successful login, server tracks the logged-in user for the session
+5. **Password Hashing** - Passwords are stored using bcrypt; legacy plain-text passwords are upgraded on first successful login
+6. **Session Management** - Upon successful login, server tracks the logged-in user for the session
 6. **Protected Routes** - To-do list page requires authentication; unauthenticated users are redirected to login
 7. **Dynamic Content** - To-do list title displays the logged-in user's name (e.g., "Jose's To-Do List")
 8. **Logout Functionality** - User can log out to clear session and return to login page
@@ -67,7 +68,7 @@ This ensures the codebase remains easy to understand and learn from during the d
 - Test both frontend and backend components separately and together
 
 ### 4. Security First (Even for Learning)
-- Never store passwords in plain text (we'll add basic hashing later)
+- Use bcrypt (salt rounds = 10) to hash passwords before storing them
 - Validate all user inputs on both client and server side
 - Use HTTPS in production (though we'll use HTTP for local development)
 

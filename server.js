@@ -1,11 +1,14 @@
 // Main application server and authentication routes
+// Passwords are hashed using bcrypt for secure storage
 
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const PORT = 3000;
+const SALT_ROUNDS = 10;
 
 // Parse JSON request bodies
 app.use(express.json());
@@ -27,14 +30,49 @@ app.post('/login', (req, res) => {
         }
 
         const users = JSON.parse(data);
-        const user = users.find(u => u.username === username && u.password === password);
+        const user = users.find(u => u.username === username);
 
-        if (user) {
-            loggedInUser = username;
-            res.json({ success: true });
-        } else {
-            res.status(401).json({ error: 'Invalid credentials' });
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials' });
         }
+
+        const storedPassword = user.password;
+        const isHashed = typeof storedPassword === 'string' && storedPassword.startsWith('$2');
+
+        // Handle legacy plain-text passwords by upgrading to a hash on first successful login
+        if (!isHashed) {
+            if (password !== storedPassword) {
+                return res.status(401).json({ error: 'Invalid credentials' });
+            }
+
+            bcrypt.hash(password, SALT_ROUNDS).then((hash) => {
+                user.password = hash;
+
+                fs.writeFile(path.join(__dirname, 'users.json'), JSON.stringify(users, null, 2), (writeErr) => {
+                    if (writeErr) {
+                        return res.status(500).json({ error: 'Server error saving user' });
+                    }
+
+                    loggedInUser = username;
+                    res.json({ success: true });
+                });
+            }).catch(() => {
+                res.status(500).json({ error: 'Server error validating credentials' });
+            });
+
+            return;
+        }
+
+        bcrypt.compare(password, storedPassword).then((match) => {
+            if (match) {
+                loggedInUser = username;
+                res.json({ success: true });
+            } else {
+                res.status(401).json({ error: 'Invalid credentials' });
+            }
+        }).catch(() => {
+            res.status(500).json({ error: 'Server error validating credentials' });
+        });
     });
 });
 
@@ -59,15 +97,19 @@ app.post('/signup', (req, res) => {
             return res.status(409).json({ error: 'Username already exists' });
         }
 
-        // Add new user
-        users.push({ username, password, tasks: [] });
+        // Hash password before storing
+        bcrypt.hash(password, SALT_ROUNDS).then((hash) => {
+            users.push({ username, password: hash, tasks: [] });
 
-        // Write back to file
-        fs.writeFile(path.join(__dirname, 'users.json'), JSON.stringify(users, null, 2), (err) => {
-            if (err) {
-                return res.status(500).json({ error: 'Server error saving user' });
-            }
-            res.json({ success: true });
+            // Write back to file
+            fs.writeFile(path.join(__dirname, 'users.json'), JSON.stringify(users, null, 2), (err) => {
+                if (err) {
+                    return res.status(500).json({ error: 'Server error saving user' });
+                }
+                res.json({ success: true });
+            });
+        }).catch(() => {
+            res.status(500).json({ error: 'Server error creating account' });
         });
     });
 });
