@@ -12,25 +12,49 @@
 <body>
   <div class="container">
     <header>
-      <h1>My To-Do List</h1>
-      <button id="logoutBtn" class="logout-btn">Log Out</button>
+      <div class="header-left">
+        <h1>My To-Do List</h1>
+      </div>
+
+      <div class="header-actions">
+        <button id="logoutBtn" class="logout-btn">Log Out</button>
+        <button id="addBtn" class="add-btn" title="Add the task to your list">Add Task</button>
+      </div>
     </header>
 
     <main>
       <section class="input-section">
         <div class="input-container">
-          <input 
-            type="text" 
-            id="taskInput" 
-            placeholder="Enter a new task..." 
-            class="task-input"
-          >
-          <select id="prioritySelect" class="priority-select" aria-label="Task priority">
-            <option value="High">High</option>
-            <option value="Medium" selected>Medium</option>
-            <option value="Low">Low</option>
-          </select>
-          <button id="addBtn" class="add-btn">Add Task</button>
+          <div class="input-group">
+            <label for="taskInput" title="Enter the description of your task">Task</label>
+            <input
+              type="text"
+              id="taskInput"
+              placeholder="Enter a new task..."
+              class="task-input"
+              title="Enter the description of your task"
+            >
+          </div>
+
+          <div class="input-group">
+            <label for="dueDateInput" title="Select the deadline">Due Date</label>
+            <input
+              type="date"
+              id="dueDateInput"
+              class="date-input"
+              aria-label="Due date"
+              title="Select the deadline"
+            >
+          </div>
+
+          <div class="input-group">
+            <label for="prioritySelect" title="Choose how urgent this is">Priority</label>
+            <select id="prioritySelect" class="priority-select" aria-label="Task priority" title="Choose how urgent this is">
+              <option value="High">High</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
         </div>
       </section>
 

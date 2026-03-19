@@ -30,7 +30,7 @@ body {
 */
 /* Main content container */
 .container {
-  max-width: 600px;
+  max-width: 800px;
   margin: 30px auto;
   padding: 40px;
   background-color: #1e1e1e;
@@ -40,15 +40,25 @@ body {
 
 /* Header layout and typography */
 header {
-  text-align: center;
   margin-bottom: 35px;
-  padding-bottom: 25px;
+  padding-bottom: 20px;
   border-bottom: 3px solid #C5A059;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 20px;
 }
 
+.header-left {
+  flex: 1;
+}
+
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
 /* Main heading styling */
 h1 {
   font-size: 3em;
@@ -75,22 +85,44 @@ h1 {
   margin-bottom: 30px;
 }
 
-/* Flexbox container for input, priority selector, and button */
+/* Input layout using CSS Grid for perfect proportional alignment */
 .input-container {
-  display: flex;
-  gap: 12px;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+  align-items: flex-end;
 }
 
-/* Priority selector styling */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Label styling for all input groups */
+.input-group label {
+  font-size: 0.85em;
+  font-weight: 700;
+  color: #C5A059;
+  letter-spacing: 0.6px;
+}
+
+@media (max-width: 720px) {
+  .input-container {
+    grid-template-columns: 1fr;
+  }
+}
+/* Priority selector styling with uniform height */
 .priority-select {
-  padding: 15px 12px;
-  font-size: 1.05em;
+  padding: 12px 12px;
+  font-size: 1em;
   border-radius: 8px;
   border: 2px solid #3a3a3a;
   background-color: #2a2a2a;
   color: #e0e0e0;
   cursor: pointer;
+  box-sizing: border-box;
+  height: 44px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -98,6 +130,11 @@ h1 {
   outline: none;
   border-color: #C5A059;
   box-shadow: 0 0 12px rgba(197, 160, 89, 0.3);
+}
+
+.priority-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Priority border styling for task cards */
@@ -117,16 +154,47 @@ h1 {
   Task input field styling
   This styles the text box where users type new tasks.
 */
-/* Task input field styling */
+/* Task input field styling with uniform height */
 .task-input {
-  flex: 1;
-  padding: 15px 18px;
-  font-size: 1.05em;
+  padding: 12px 16px;
+  font-size: 1em;
   background-color: #2a2a2a;
   color: #b0b0b0;
   border: 2px solid #3a3a3a;
   border-radius: 8px;
+  box-sizing: border-box;
+  height: 44px;
   transition: all 0.3s ease;
+}
+
+.task-input::placeholder {
+  color: #666;
+}
+
+.task-input:focus {
+  outline: none;
+  border-color: #C5A059;
+  background-color: #333333;
+  box-shadow: 0 0 12px rgba(197, 160, 89, 0.3);
+}
+
+/* Due date input styling with uniform height */
+.date-input {
+  padding: 12px 14px;
+  font-size: 1em;
+  background-color: #2a2a2a;
+  color: #b0b0b0;
+  border: 2px solid #3a3a3a;
+  border-radius: 8px;
+  box-sizing: border-box;
+  height: 44px;
+  transition: all 0.3s ease;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: #C5A059;
+  box-shadow: 0 0 12px rgba(197, 160, 89, 0.3);
 }
 
 /* Placeholder text styling */
@@ -227,12 +295,13 @@ h1 {
   gap: 8px;
 }
 
-/* Task footer with timestamp and buttons */
+/* Task footer with timestamp, urgency, and action buttons */
 .task-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 /* Task text styling */
@@ -252,6 +321,31 @@ h1 {
   font-weight: 500;
   margin-top: 4px;
   display: block;
+}
+
+/* Urgency indicator styling */
+.task-urgency {
+  font-size: 0.85em;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-left: 16px;
+  white-space: nowrap;
+}
+
+.urgency-overdue {
+  color: rgba(238, 77, 77, 0.95);
+}
+
+.urgency-today {
+  color: rgba(255, 165, 0, 0.9);
+}
+
+.urgency-future {
+  color: rgba(197, 160, 89, 0.9);
+}
+
+.urgency-no-date {
+  color: rgba(197, 160, 89, 0.6);
 }
 
 /* Task actions button group */

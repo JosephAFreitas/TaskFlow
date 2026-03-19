@@ -51,6 +51,7 @@
 - **User-Specific Storage** - Each user has a private set of tasks stored in PostgreSQL tasks table with foreign key relationship
 - **Task Priority** - Each task includes a priority field (High/Medium/Low) which impacts ordering and styling
 - **Task Timestamping** - Each task stores a created_at timestamp in PostgreSQL, displayed with a formatted date/time and 'days ago' label
+- **Due Date & Urgency** - Tasks can have an optional due_date; the UI shows urgency status (Overdue, Due Today, Due in X Days, No Date) and sorts accordingly
 - **RESTful API** - Frontend communicates with backend using standard HTTP methods (GET, POST, PUT, DELETE) for individual task operations
 - **Real-Time Sync** - Changes are immediately saved to database when tasks are added, modified, or deleted
 

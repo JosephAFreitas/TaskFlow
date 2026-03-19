@@ -25,6 +25,7 @@ async function loadUser() {
 
 // DOM element selectors
 const taskInput = document.querySelector('#taskInput');
+const dueDateInput = document.querySelector('#dueDateInput');
 const prioritySelect = document.querySelector('#prioritySelect');
 const addButton = document.querySelector('#addBtn');
 const taskList = document.querySelector('#taskList');
@@ -53,7 +54,42 @@ function normalizeCreatedAt(task) {
     return new Date(task.created_at).getTime();
   }
 
+  if (task.createdAt) {
+    return new Date(task.createdAt).getTime();
+  }
+
   return Date.now();
+}
+
+// Calculate urgency status based on due date
+function getUrgencyStatus(dueDate) {
+  if (!dueDate) return 'No Date';
+
+  const today = new Date();
+  const due = new Date(dueDate);
+  const floor = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+  const daysDiff = Math.round((floor(due) - floor(today)) / (24 * 60 * 60 * 1000));
+
+  if (daysDiff < 0) return 'Overdue';
+  if (daysDiff === 0) return 'Due Today';
+  return daysDiff === 1 ? 'Due in 1 Day' : `Due in ${daysDiff} Days`;
+}
+
+// Map urgency status to a CSS class
+function getUrgencyClass(status) {
+  if (status === 'Overdue') return 'urgency-overdue';
+  if (status === 'Due Today') return 'urgency-today';
+  if (status.startsWith('Due in')) return 'urgency-future';
+  return 'urgency-no-date';
+}
+
+// Determine urgency group for sorting
+function getUrgencyRank(status) {
+  if (status === 'Overdue') return 0;
+  if (status === 'Due Today') return 1;
+  if (status.startsWith('Due in')) return 2;
+  return 3;
 }
 
 // Format a timestamp as a date/time string with relative days ago
@@ -74,12 +110,26 @@ function formatDateWithRelative(timestamp) {
   return `${datePart} at ${timePart} - ${relative}`;
 }
 
-// Sort tasks by priority (High -> Medium -> Low) then by newest createdAt
+// Sort tasks by urgency, then priority, then due date / createdAt
 function sortTasks() {
   tasks.sort((a, b) => {
+    const aUrgency = getUrgencyStatus(a.dueDate);
+    const bUrgency = getUrgencyStatus(b.dueDate);
+
+    const urgencyDiff = getUrgencyRank(aUrgency) - getUrgencyRank(bUrgency);
+    if (urgencyDiff !== 0) return urgencyDiff;
+
     const p = priorityValue(a.priority) - priorityValue(b.priority);
     if (p !== 0) return p;
 
+    // Within the same urgency group, further sort by due date (earliest first)
+    if (a.dueDate || b.dueDate) {
+      const aDue = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+      const bDue = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+      if (aDue !== bDue) return aDue - bDue;
+    }
+
+    // Fallback to createdAt (most recent first)
     const aTime = normalizeCreatedAt(a);
     const bTime = normalizeCreatedAt(b);
     return bTime - aTime;
@@ -116,8 +166,12 @@ async function init() {
     completed: task.completed,
     priority: task.priority || 'Low',
     createdAt: normalizeCreatedAt(task),
+    dueDate: task.due_date || null,
   }));
   renderTasks();
+
+  // Initialize Add button disabled state
+  updateAddButtonState();
 }
 
 // Add new task from input
@@ -128,18 +182,21 @@ async function addTask() {
     return;
   }
 
+  const dueDateValue = dueDateInput.value || null;
+
   try {
     const response = await fetch('/api/tasks', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ text: taskText, priority, completed: false })
+      body: JSON.stringify({ text: taskText, priority, completed: false, due_date: dueDateValue })
     });
 
     if (response.ok) {
       const newTask = await response.json();
       newTask.createdAt = normalizeCreatedAt(newTask);
+      newTask.dueDate = newTask.due_date || null;
       tasks.push(newTask);
       sortTasks();
       renderTasks();
@@ -151,8 +208,21 @@ async function addTask() {
   }
 
   taskInput.value = '';
+  dueDateInput.value = '';
+  updateAddButtonState();
   taskInput.focus();
 }
+
+// Update Add button disabled state based on task input
+function updateAddButtonState() {
+  const hasText = taskInput.value.trim().length > 0;
+  addButton.disabled = !hasText;
+  addButton.style.opacity = hasText ? '1' : '0.5';
+  addButton.style.cursor = hasText ? 'pointer' : 'not-allowed';
+}
+
+// Handle input changes to manage button state
+taskInput.addEventListener('input', updateAddButtonState);
 
 // Handle Enter key in input field
 taskInput.addEventListener('keydown', (event) => {
@@ -264,6 +334,11 @@ function addTaskToDOM(task) {
   const createdAt = normalizeCreatedAt(task);
   timeSpan.textContent = formatDateWithRelative(createdAt);
 
+  const urgencyStatus = getUrgencyStatus(task.dueDate);
+  const urgencySpan = document.createElement('span');
+  urgencySpan.className = `task-urgency ${getUrgencyClass(urgencyStatus)}`;
+  urgencySpan.textContent = urgencyStatus;
+
   const doneButton = document.createElement('button');
   doneButton.textContent = '✓';
   doneButton.className = 'done-btn';
@@ -288,6 +363,7 @@ function addTaskToDOM(task) {
   const footerContainer = document.createElement('div');
   footerContainer.className = 'task-footer';
   footerContainer.appendChild(timeSpan);
+  footerContainer.appendChild(urgencySpan);
   footerContainer.appendChild(actionContainer);
 
   const contentContainer = document.createElement('div');

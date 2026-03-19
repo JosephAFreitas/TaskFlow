@@ -97,7 +97,7 @@ app.get('/api/tasks', async (req, res) => {
     }
 
     try {
-        const result = await pool.query('SELECT id, text, priority, completed, created_at FROM tasks WHERE user_id = $1 ORDER BY created_at DESC', [loggedInUser.id]);
+        const result = await pool.query('SELECT id, text, priority, completed, created_at, due_date FROM tasks WHERE user_id = $1 ORDER BY created_at DESC', [loggedInUser.id]);
         res.json(result.rows);
     } catch (error) {
         console.error('Get tasks error:', error);
@@ -111,7 +111,7 @@ app.post('/api/tasks', async (req, res) => {
         return res.status(401).json({ error: 'Not logged in' });
     }
 
-    const { text, priority, completed } = req.body;
+    const { text, priority, completed, due_date } = req.body;
 
     if (!text || typeof text !== 'string') {
         return res.status(400).json({ error: 'Task text is required' });
@@ -119,15 +119,16 @@ app.post('/api/tasks', async (req, res) => {
 
     try {
         const result = await pool.query(
-            'INSERT INTO tasks (user_id, text, priority, completed, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING id, created_at',
-            [loggedInUser.id, text, priority || 'Low', completed || false]
+            'INSERT INTO tasks (user_id, text, priority, completed, due_date, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id, created_at, due_date',
+            [loggedInUser.id, text, priority || 'Low', completed || false, due_date || null]
         );
         const newTask = {
             id: result.rows[0].id,
             text,
             priority: priority || 'Low',
             completed: completed || false,
-            created_at: result.rows[0].created_at
+            created_at: result.rows[0].created_at,
+            due_date: result.rows[0].due_date
         };
         res.json(newTask);
     } catch (error) {
@@ -143,24 +144,40 @@ app.put('/api/tasks/:id', async (req, res) => {
     }
 
     const taskId = parseInt(req.params.id);
-    const { text, completed } = req.body;
+    const { text, completed, due_date } = req.body;
 
     if (isNaN(taskId)) {
         return res.status(400).json({ error: 'Invalid task ID' });
     }
 
-    try {
-        let query, params;
-        if (text !== undefined) {
-            query = 'UPDATE tasks SET text = $1 WHERE id = $2 AND user_id = $3';
-            params = [text, taskId, loggedInUser.id];
-        } else if (completed !== undefined) {
-            query = 'UPDATE tasks SET completed = $1 WHERE id = $2 AND user_id = $3';
-            params = [completed, taskId, loggedInUser.id];
-        } else {
-            return res.status(400).json({ error: 'No update fields provided' });
-        }
+    const updates = [];
+    const params = [];
+    let paramIndex = 1;
 
+    if (text !== undefined) {
+        updates.push(`text = $${paramIndex++}`);
+        params.push(text);
+    }
+
+    if (completed !== undefined) {
+        updates.push(`completed = $${paramIndex++}`);
+        params.push(completed);
+    }
+
+    if (due_date !== undefined) {
+        updates.push(`due_date = $${paramIndex++}`);
+        params.push(due_date || null);
+    }
+
+    if (updates.length === 0) {
+        return res.status(400).json({ error: 'No update fields provided' });
+    }
+
+    params.push(taskId, loggedInUser.id);
+
+    const query = `UPDATE tasks SET ${updates.join(', ')} WHERE id = $${paramIndex++} AND user_id = $${paramIndex}`;
+
+    try {
         const result = await pool.query(query, params);
         if (result.rowCount === 0) {
             return res.status(404).json({ error: 'Task not found' });
