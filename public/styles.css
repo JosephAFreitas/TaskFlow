@@ -75,11 +75,42 @@ h1 {
   margin-bottom: 30px;
 }
 
-/* Flexbox container for input and button */
+/* Flexbox container for input, priority selector, and button */
 .input-container {
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+/* Priority selector styling */
+.priority-select {
+  padding: 15px 12px;
+  font-size: 1.05em;
+  border-radius: 8px;
+  border: 2px solid #3a3a3a;
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.priority-select:focus {
+  outline: none;
+  border-color: #C5A059;
+  box-shadow: 0 0 12px rgba(197, 160, 89, 0.3);
+}
+
+/* Priority border styling for task cards */
+.task-item.priority-high {
+  border-left: 6px solid rgba(238, 77, 77, 0.9);
+}
+
+.task-item.priority-medium {
+  border-left: 6px solid rgba(15, 92, 173, 0.9);
+}
+
+.task-item.priority-low {
+  border-left: 6px solid rgba(197, 160, 89, 0.9);
 }
 
 /*
@@ -215,10 +246,12 @@ h1 {
 }
 
 /* Task timestamp styling */
-.task-time {
-  font-size: 0.9em;
-  color: #888;
+.task-created {
+  font-size: 0.85em;
+  color: rgba(197, 160, 89, 0.8);
   font-weight: 500;
+  margin-top: 4px;
+  display: block;
 }
 
 /* Task actions button group */

@@ -4,6 +4,8 @@
   Tasks stored on server per user with id, text, timestamp, completed properties.
 */
 
+console.log('Script loaded successfully');
+
 // Fetch current logged-in username and update page title
 async function loadUser() {
   try {
@@ -23,12 +25,73 @@ async function loadUser() {
 
 // DOM element selectors
 const taskInput = document.querySelector('#taskInput');
+const prioritySelect = document.querySelector('#prioritySelect');
 const addButton = document.querySelector('#addBtn');
 const taskList = document.querySelector('#taskList');
 const logoutButton = document.querySelector('#logoutBtn');
 
 // In-memory tasks array
 let tasks = [];
+
+// Normalize priority string to a sort value
+function priorityValue(priority) {
+  const mapping = { High: 0, Medium: 1, Low: 2 };
+  return mapping[priority] ?? 2;
+}
+
+// Normalize createdAt field for legacy tasks or DB timestamps
+function normalizeCreatedAt(task) {
+  if (typeof task.createdAt === 'number') {
+    return task.createdAt;
+  }
+
+  if (typeof task.id === 'number' && String(task.id).length >= 12) {
+    return task.id;
+  }
+
+  if (task.created_at) {
+    return new Date(task.created_at).getTime();
+  }
+
+  return Date.now();
+}
+
+// Format a timestamp as a date/time string with relative days ago
+function formatDateWithRelative(timestamp) {
+  const now = new Date();
+  const then = new Date(timestamp);
+
+  const options = { month: 'short', day: 'numeric', year: 'numeric' };
+  const datePart = then.toLocaleDateString(undefined, options);
+
+  const timeOptions = { hour: 'numeric', minute: '2-digit' };
+  const timePart = then.toLocaleTimeString(undefined, timeOptions);
+
+  const oneDay = 24 * 60 * 60 * 1000;
+  const daysDiff = Math.floor((now.setHours(0, 0, 0, 0) - then.setHours(0, 0, 0, 0)) / oneDay);
+  const relative = daysDiff === 0 ? 'Today' : daysDiff === 1 ? 'Yesterday' : `${daysDiff} days ago`;
+
+  return `${datePart} at ${timePart} - ${relative}`;
+}
+
+// Sort tasks by priority (High -> Medium -> Low) then by newest createdAt
+function sortTasks() {
+  tasks.sort((a, b) => {
+    const p = priorityValue(a.priority) - priorityValue(b.priority);
+    if (p !== 0) return p;
+
+    const aTime = normalizeCreatedAt(a);
+    const bTime = normalizeCreatedAt(b);
+    return bTime - aTime;
+  });
+}
+
+// Render all tasks to the DOM
+function renderTasks() {
+  sortTasks();
+  taskList.innerHTML = '';
+  tasks.forEach((task) => addTaskToDOM(task));
+}
 
 // Initialize app by loading user and tasks
 async function init() {
@@ -46,22 +109,49 @@ async function init() {
     tasks = [];
   }
 
-  tasks.forEach((task) => addTaskToDOM(task));
+  // Ensure tasks include priority and createdAt
+  tasks = tasks.map((task) => ({
+    id: task.id,
+    text: task.text,
+    completed: task.completed,
+    priority: task.priority || 'Low',
+    createdAt: normalizeCreatedAt(task),
+  }));
+  renderTasks();
 }
 
-// Persist tasks to server
-async function saveTasks() {
+// Add new task from input
+async function addTask() {
+  const taskText = taskInput.value.trim();
+  const priority = prioritySelect.value;
+  if (!taskText) {
+    return;
+  }
+
   try {
-    await fetch('/api/tasks', {
+    const response = await fetch('/api/tasks', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(tasks)
+      body: JSON.stringify({ text: taskText, priority, completed: false })
     });
+
+    if (response.ok) {
+      const newTask = await response.json();
+      newTask.createdAt = normalizeCreatedAt(newTask);
+      tasks.push(newTask);
+      sortTasks();
+      renderTasks();
+    } else {
+      console.error('Failed to add task');
+    }
   } catch (error) {
-    console.error('Failed to save tasks:', error);
+    console.error('Failed to add task:', error);
   }
+
+  taskInput.value = '';
+  taskInput.focus();
 }
 
 // Handle Enter key in input field
@@ -78,7 +168,9 @@ addButton.addEventListener('click', addTask);
 logoutButton.addEventListener('click', logout);
 
 // Event delegation for task actions
-taskList.addEventListener('click', (event) => {
+taskList.addEventListener('click', handleTaskClick);
+
+async function handleTaskClick(event) {
   const target = event.target;
   const listItem = target.closest('.task-item');
   if (!listItem) return;
@@ -88,20 +180,39 @@ taskList.addEventListener('click', (event) => {
   if (!task) return;
 
   if (target.classList.contains('done-btn')) {
-    listItem.classList.toggle('completed');
-    task.completed = listItem.classList.contains('completed');
-    saveTasks();
+    const newCompleted = !task.completed;
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed: newCompleted })
+      });
+      if (response.ok) {
+        listItem.classList.toggle('completed');
+        task.completed = newCompleted;
+      }
+    } catch (error) {
+      console.error('Failed to update task:', error);
+    }
   } else if (target.classList.contains('delete-btn')) {
-    listItem.remove();
-    tasks = tasks.filter((t) => t.id !== taskId);
-    saveTasks();
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, { method: 'DELETE' });
+      if (response.ok) {
+        tasks = tasks.filter((t) => t.id !== taskId);
+        renderTasks();
+      }
+    } catch (error) {
+      console.error('Failed to delete task:', error);
+    }
   } else if (target.classList.contains('edit-btn')) {
     enterEditMode(task, listItem.querySelector('.task-text'));
   }
-});
+}
 
 // Handle double-click for editing
-taskList.addEventListener('dblclick', (event) => {
+taskList.addEventListener('dblclick', handleTaskDoubleClick);
+
+function handleTaskDoubleClick(event) {
   if (event.target.classList.contains('task-text')) {
     const listItem = event.target.closest('.task-item');
     const taskId = parseInt(listItem.dataset.id);
@@ -110,31 +221,9 @@ taskList.addEventListener('dblclick', (event) => {
       enterEditMode(task, event.target);
     }
   }
-});
-
-// Add new task from input
-function addTask() {
-  const taskText = taskInput.value.trim();
-  if (!taskText) {
-    return;
-  }
-
-  const newTask = {
-    id: Date.now(),
-    text: taskText,
-    timestamp: formatCurrentTime(),
-    completed: false,
-  };
-
-  tasks.push(newTask);
-  saveTasks();
-  addTaskToDOM(newTask);
-
-  taskInput.value = '';
-  taskInput.focus();
 }
 
-// Handle user logout
+// Logout and redirect to login page
 async function logout() {
   console.log('Logout clicked');
   try {
@@ -171,8 +260,9 @@ function addTaskToDOM(task) {
   taskSpan.textContent = task.text;
 
   const timeSpan = document.createElement('span');
-  timeSpan.className = 'task-time';
-  timeSpan.textContent = task.timestamp;
+  timeSpan.className = 'task-created';
+  const createdAt = normalizeCreatedAt(task);
+  timeSpan.textContent = formatDateWithRelative(createdAt);
 
   const doneButton = document.createElement('button');
   doneButton.textContent = '✓';
@@ -211,6 +301,10 @@ function addTaskToDOM(task) {
     listItem.classList.add('completed');
   }
 
+  // Apply task priority class for styling
+  const priority = task.priority || 'Low';
+  listItem.classList.add(`priority-${priority.toLowerCase()}`);
+
   taskList.appendChild(listItem);
 }
 
@@ -227,18 +321,28 @@ function enterEditMode(task, taskSpan) {
   editInput.focus();
   editInput.select();
 
-  const saveChanges = () => {
+  const saveChanges = async () => {
     const newText = editInput.value.trim();
 
-    if (newText) {
-      task.text = newText;
-      taskSpan.textContent = newText;
-
-      const index = tasks.findIndex((t) => t.id === task.id);
-      if (index !== -1) {
-        tasks[index].text = newText;
-        saveTasks();
+    if (newText && newText !== originalText) {
+      try {
+        const response = await fetch(`/api/tasks/${task.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: newText })
+        });
+        if (response.ok) {
+          task.text = newText;
+          taskSpan.textContent = newText;
+        } else {
+          taskSpan.textContent = originalText;
+        }
+      } catch (error) {
+        console.error('Failed to update task text:', error);
+        taskSpan.textContent = originalText;
       }
+    } else {
+      taskSpan.textContent = originalText;
     }
 
     editInput.replaceWith(taskSpan);

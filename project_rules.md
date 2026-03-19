@@ -21,14 +21,17 @@
 ### Backend (Server-Side)
 - **Node.js** - JavaScript runtime environment that allows running JavaScript on the server
 - **Express.js** - Web framework for Node.js that simplifies building web applications and APIs
-- **JSON File Storage** - Simple file-based storage for user data (users.json) to practice data persistence before using databases
+- **PostgreSQL** - Relational database for secure, scalable data persistence using Neon cloud hosting
+- **pg (node-postgres)** - PostgreSQL client for Node.js with connection pooling
+- **bcrypt** - Library for hashing passwords securely with salt rounds
 - **HTTP/HTTPS** - Standard web protocols for client-server communication
 
 ## Backend Architecture
 
 ### Server Structure
 - **server.js** - Main server file that starts the Express application and defines all routes
-- **users.json** - JSON file storing user accounts with username, password, and personal task arrays
+- **db.js** - Database connection configuration using PostgreSQL connection pool
+- **PostgreSQL Database** - Hosted on Neon with users and tasks tables for data persistence
 - **public/** - Folder containing all frontend files (HTML, CSS, JavaScript) served by the Express server
 
 ### Authentication Flow
@@ -45,9 +48,11 @@
 8. **Logout Functionality** - User can log out to clear session and return to login page
 
 ### Data Persistence
-- **User-Specific Storage** - Each user has a private tasks array stored in users.json
-- **Server-Side Persistence** - Tasks survive browser restarts, device changes, and are accessible from any location
-- **Real-Time Sync** - Changes are immediately saved to server when tasks are added, modified, or deleted
+- **User-Specific Storage** - Each user has a private set of tasks stored in PostgreSQL tasks table with foreign key relationship
+- **Task Priority** - Each task includes a priority field (High/Medium/Low) which impacts ordering and styling
+- **Task Timestamping** - Each task stores a created_at timestamp in PostgreSQL, displayed with a formatted date/time and 'days ago' label
+- **RESTful API** - Frontend communicates with backend using standard HTTP methods (GET, POST, PUT, DELETE) for individual task operations
+- **Real-Time Sync** - Changes are immediately saved to database when tasks are added, modified, or deleted
 
 ## Coding Rules
 
@@ -71,7 +76,9 @@ This ensures the codebase remains easy to understand and learn from during the d
 
 ### 4. Security First (Even for Learning)
 - Use bcrypt (salt rounds = 10) to hash passwords before storing them
-- Validate all user inputs on both client and server side- Enforce strong username/password requirements on signup- Use HTTPS in production (though we'll use HTTP for local development)
+- Validate all user inputs on both client and server side
+- Enforce strong username/password requirements on signup
+- Use HTTPS in production (though we'll use HTTP for local development)
 
 ### 5. Professional Comment Styling
 - Add a single, sleek comment block at the top of each file describing its primary responsibility
@@ -82,4 +89,4 @@ This ensures the codebase remains easy to understand and learn from during the d
 
 ---
 
-**Last Updated:** March 18, 2026
+**Last Updated:** March 19, 2026
