@@ -12,8 +12,9 @@ async function loadUser() {
     const response = await fetch('/api/user');
     const data = await response.json();
     if (data.username) {
+      currentUsername = data.username;
       const h1 = document.querySelector('h1');
-      h1.innerHTML = `<span class="username">${data.username}'s</span><br>To-Do List`;
+      h1.innerHTML = `<span class="username">${currentUsername}'s</span><br>To-Do List`;
     } else {
       window.location.href = 'login.html';
     }
@@ -30,9 +31,25 @@ const prioritySelect = document.querySelector('#prioritySelect');
 const addButton = document.querySelector('#addBtn');
 const taskList = document.querySelector('#taskList');
 const logoutButton = document.querySelector('#logoutBtn');
+const greetingContainer = document.querySelector('#greetingContainer');
 
 // In-memory tasks array
 let tasks = [];
+let currentUsername = '';
+
+// Build a local YYYY-MM-DD string without UTC conversion
+function getLocalDateString(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+// Enforce no-past-date selection in the native date picker
+function applyDueDateMinConstraint() {
+  if (!dueDateInput) return;
+  dueDateInput.min = getLocalDateString();
+}
 
 // Normalize priority string to a sort value
 function priorityValue(priority) {
@@ -61,15 +78,43 @@ function normalizeCreatedAt(task) {
   return Date.now();
 }
 
+// Parse YYYY-MM-DD as a local date to avoid UTC timezone drift
+function parseDueDateLocal(dueDate) {
+  if (!dueDate) return null;
+
+  if (dueDate instanceof Date) {
+    return new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
+  }
+
+  if (typeof dueDate === 'string') {
+    const match = dueDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (match) {
+      const year = Number(match[1]);
+      const monthIndex = Number(match[2]) - 1;
+      const day = Number(match[3]);
+      return new Date(year, monthIndex, day);
+    }
+  }
+
+  const parsed = new Date(dueDate);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+}
+
+function startOfTodayLocal() {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
 // Calculate urgency status based on due date
 function getUrgencyStatus(dueDate) {
   if (!dueDate) return 'No Date';
 
-  const today = new Date();
-  const due = new Date(dueDate);
-  const floor = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const today = startOfTodayLocal();
+  const due = parseDueDateLocal(dueDate);
+  if (!due) return 'No Date';
 
-  const daysDiff = Math.round((floor(due) - floor(today)) / (24 * 60 * 60 * 1000));
+  const daysDiff = Math.round((due - today) / (24 * 60 * 60 * 1000));
 
   if (daysDiff < 0) return 'Overdue';
   if (daysDiff === 0) return 'Due Today';
@@ -92,10 +137,50 @@ function getUrgencyRank(status) {
   return 3;
 }
 
+// Build and render dashboard greeting using local time and current task urgency
+function updateGreeting() {
+  if (!greetingContainer) return;
+
+  const now = new Date();
+  const hour = now.getHours();
+
+  let timeGreeting = 'Good evening';
+  if (hour < 12) timeGreeting = 'Good morning';
+  else if (hour < 18) timeGreeting = 'Good afternoon';
+
+  const displayName = currentUsername || 'there';
+  const currentDate = now.toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const openTasks = tasks.filter((task) => !task.completed);
+  const overdueCount = openTasks.filter((task) => getUrgencyStatus(task.dueDate) === 'Overdue').length;
+  const dueTodayCount = openTasks.filter((task) => getUrgencyStatus(task.dueDate) === 'Due Today').length;
+
+  let statusMessage = 'You are all caught up for today.';
+  if (overdueCount > 0) {
+    statusMessage = overdueCount === 1 ? 'You have 1 overdue task.' : `You have ${overdueCount} overdue tasks.`;
+  } else if (dueTodayCount > 0) {
+    statusMessage = dueTodayCount === 1 ? 'You have 1 task due today.' : `You have ${dueTodayCount} tasks due today.`;
+  }
+
+  greetingContainer.innerHTML = `
+    <span class="greeting-title">${timeGreeting}, ${displayName}.</span>
+    <span class="greeting-date">${currentDate}</span>
+    <span class="greeting-status">${statusMessage}</span>
+  `;
+}
+
 // Format a timestamp as a date/time string with relative days ago
 function formatDateWithRelative(timestamp) {
   const now = new Date();
   const then = new Date(timestamp);
+
+  if (Number.isNaN(then.getTime())) {
+    return 'Invalid date';
+  }
 
   const options = { month: 'short', day: 'numeric', year: 'numeric' };
   const datePart = then.toLocaleDateString(undefined, options);
@@ -104,7 +189,11 @@ function formatDateWithRelative(timestamp) {
   const timePart = then.toLocaleTimeString(undefined, timeOptions);
 
   const oneDay = 24 * 60 * 60 * 1000;
-  const daysDiff = Math.floor((now.setHours(0, 0, 0, 0) - then.setHours(0, 0, 0, 0)) / oneDay);
+  const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const createdLocal = new Date(then.getFullYear(), then.getMonth(), then.getDate());
+
+  // Clamp negative values caused by timezone edge cases so created timestamps never show "-1 days ago".
+  const daysDiff = Math.max(0, Math.floor((todayLocal - createdLocal) / oneDay));
   const relative = daysDiff === 0 ? 'Today' : daysDiff === 1 ? 'Yesterday' : `${daysDiff} days ago`;
 
   return `${datePart} at ${timePart} - ${relative}`;
@@ -124,8 +213,10 @@ function sortTasks() {
 
     // Within the same urgency group, further sort by due date (earliest first)
     if (a.dueDate || b.dueDate) {
-      const aDue = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
-      const bDue = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+      const aDueDate = parseDueDateLocal(a.dueDate);
+      const bDueDate = parseDueDateLocal(b.dueDate);
+      const aDue = aDueDate ? aDueDate.getTime() : Infinity;
+      const bDue = bDueDate ? bDueDate.getTime() : Infinity;
       if (aDue !== bDue) return aDue - bDue;
     }
 
@@ -141,11 +232,13 @@ function renderTasks() {
   sortTasks();
   taskList.innerHTML = '';
   tasks.forEach((task) => addTaskToDOM(task));
+  updateGreeting();
 }
 
 // Initialize app by loading user and tasks
 async function init() {
   await loadUser();
+  applyDueDateMinConstraint();
 
   try {
     const response = await fetch('/api/tasks');
@@ -183,6 +276,14 @@ async function addTask() {
   }
 
   const dueDateValue = dueDateInput.value || null;
+  const todayLocal = getLocalDateString();
+
+  // Guard against manual input of dates earlier than today.
+  if (dueDateValue && dueDateValue < todayLocal) {
+    alert('Please select today or a future due date.');
+    dueDateInput.focus();
+    return;
+  }
 
   try {
     const response = await fetch('/api/tasks', {
@@ -260,6 +361,7 @@ async function handleTaskClick(event) {
       if (response.ok) {
         listItem.classList.toggle('completed');
         task.completed = newCompleted;
+        updateGreeting();
       }
     } catch (error) {
       console.error('Failed to update task:', error);
