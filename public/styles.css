@@ -397,6 +397,13 @@ h1 {
   flex-wrap: wrap;
 }
 
+/* Metadata container for timestamp and urgency on desktop */
+.task-metadata {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
 /* Task text styling */
 .task-text {
   font-size: 1.05em;
@@ -765,5 +772,69 @@ h1 {
     flex: 1 0 100%;
     padding: 12px 20px;
     font-size: 1em;
+  }
+
+  /*
+    Stack task footer vertically on mobile
+    Prevents action buttons from overlapping timestamp/urgency
+  */
+  .task-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /*
+    Add spacing to metadata row on mobile
+    Keeps timestamp and urgency on same line with proper spacing
+  */
+  .task-metadata {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /*
+    Ensure action buttons are touchable on mobile
+    Minimum 44px height for comfortable mobile touch targets
+  */
+  .task-actions {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+
+  .task-btn {
+    padding: 10px 14px;
+    font-size: 0.95em;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /*
+    Prevent task text overflow on mobile
+    word-break ensures long text wraps properly on narrow screens
+  */
+  .task-text {
+    word-break: break-word;
+    max-width: 100%;
+  }
+
+  /*
+    Adjust task item padding for mobile
+    Reduces padding on small screens to maximize content space
+  */
+  .task-item {
+    padding: 12px 14px;
+  }
+
+  /*
+    Reduce urgency styling for mobile
+    Remove left margin to fit better in narrow layout
+  */
+  .task-urgency {
+    margin-left: 0;
   }
 }

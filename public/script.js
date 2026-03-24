@@ -462,10 +462,15 @@ function addTaskToDOM(task) {
   actionContainer.appendChild(editButton);
   actionContainer.appendChild(deleteButton);
 
+  // Wrap metadata (timestamp and urgency) for mobile stack layout
+  const metadataContainer = document.createElement('div');
+  metadataContainer.className = 'task-metadata';
+  metadataContainer.appendChild(timeSpan);
+  metadataContainer.appendChild(urgencySpan);
+
   const footerContainer = document.createElement('div');
   footerContainer.className = 'task-footer';
-  footerContainer.appendChild(timeSpan);
-  footerContainer.appendChild(urgencySpan);
+  footerContainer.appendChild(metadataContainer);
   footerContainer.appendChild(actionContainer);
 
   const contentContainer = document.createElement('div');
