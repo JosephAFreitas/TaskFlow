@@ -78,46 +78,51 @@ function normalizeCreatedAt(task) {
   return Date.now();
 }
 
+function toStartOfLocalDay(date) {
+  const local = new Date(date);
+  if (Number.isNaN(local.getTime())) return null;
+  local.setHours(0, 0, 0, 0);
+  return local;
+}
+
 // Parse YYYY-MM-DD as a local date to avoid UTC timezone drift
 function parseDueDateLocal(dueDate) {
   if (!dueDate) return null;
 
   if (dueDate instanceof Date) {
-    return new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
+    return toStartOfLocalDay(dueDate);
   }
 
   if (typeof dueDate === 'string') {
-    const match = dueDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const normalized = dueDate.split('T')[0];
+    const match = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
     if (match) {
       const year = Number(match[1]);
       const monthIndex = Number(match[2]) - 1;
       const day = Number(match[3]);
-      return new Date(year, monthIndex, day);
+      return new Date(year, monthIndex, day, 0, 0, 0, 0);
     }
+
+    // For non-ISO string formats, avoid guessing and return null.
+    return null;
   }
 
-  const parsed = new Date(dueDate);
-  if (Number.isNaN(parsed.getTime())) return null;
-  return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
-}
-
-function startOfTodayLocal() {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return toStartOfLocalDay(dueDate);
 }
 
 // Calculate urgency status based on due date
 function getUrgencyStatus(dueDate) {
   if (!dueDate) return 'No Date';
 
-  const today = startOfTodayLocal();
+  const today = toStartOfLocalDay(new Date());
   const due = parseDueDateLocal(dueDate);
-  if (!due) return 'No Date';
+  if (!today || !due) return 'No Date';
 
-  const daysDiff = Math.round((due - today) / (24 * 60 * 60 * 1000));
+  const oneDay = 1000 * 60 * 60 * 24;
+  const daysDiff = Math.round((due.getTime() - today.getTime()) / oneDay);
 
-  if (daysDiff < 0) return 'Overdue';
   if (daysDiff === 0) return 'Due Today';
+  if (daysDiff < 0) return 'Overdue';
   return daysDiff === 1 ? 'Due in 1 Day' : `Due in ${daysDiff} Days`;
 }
 
@@ -189,8 +194,9 @@ function formatDateWithRelative(timestamp) {
   const timePart = then.toLocaleTimeString(undefined, timeOptions);
 
   const oneDay = 24 * 60 * 60 * 1000;
-  const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const createdLocal = new Date(then.getFullYear(), then.getMonth(), then.getDate());
+  const todayLocal = toStartOfLocalDay(now);
+  const createdLocal = toStartOfLocalDay(then);
+  if (!todayLocal || !createdLocal) return `${datePart} at ${timePart}`;
 
   // Clamp negative values caused by timezone edge cases so created timestamps never show "-1 days ago".
   const daysDiff = Math.max(0, Math.floor((todayLocal - createdLocal) / oneDay));
