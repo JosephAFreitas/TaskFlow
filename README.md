@@ -55,8 +55,8 @@ A full-stack web application for intelligent task management with secure authent
 
 1. **Clone the repository**
    ```bash
-   git clone [https://github.com/JosephAFreitas/MyFirstApp.git](https://github.com/JosephAFreitas/MyFirstApp.git)
-   cd MyFirstApp
+   git clone [https://github.com/JosephAFreitas/TaskFlow.git](https://github.com/JosephAFreitas/TaskFlow.git)
+   cd TaskFlow
    ```
 
 2. **Install dependencies**
@@ -154,4 +154,4 @@ This project is open source and available under the MIT License.
 
 ---
 
-**Built for practice in full stack development** | Last Updated: March 23, 2026
+**Developed by Joseph Anthony Freitas | Engineered for performance, security, and scalability.** | Last Updated: March 23, 2026

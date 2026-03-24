@@ -1,7 +1,7 @@
 {
-  "name": "myfirstapp",
+  "name": "taskflow",
   "version": "1.0.0",
-  "description": "A simple to-do list web application with authentication",
+  "description": "A full-stack task management application with secure authentication and PostgreSQL integration.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -19,6 +19,6 @@
     "nodejs",
     "express"
   ],
-  "author": "Jose",
+  "author": "Joseph Anthony Freitas",
   "license": "MIT"
 }
