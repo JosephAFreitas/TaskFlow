@@ -6,9 +6,11 @@ A full-stack web application for intelligent task management with secure authent
 
 ---
 
-## Overview
+## Preview
 
-![TaskFlow Dashboard](screenshot.png)
+| Login Page | Desktop Dashboard | Mobile View |
+| :--- | :--- | :--- |
+| ![Login](screenshot1.png) | ![Dashboard](screenshot2.png) | ![Mobile](screenshot3.png) |
 
 **TaskFlow** is a production-ready to-do list application demonstrating modern full-stack development practices. Built with vanilla JavaScript on the frontend and Node.js/Express on the backend, it features secure user authentication via bcrypt, timezone-aware date calculations, priority-based task sorting, and persistent data storage on PostgreSQL. The application emphasizes clean code architecture, accessibility standards, and responsive design patterns suitable for professional software engineering environments.
 
